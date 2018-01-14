@@ -55,19 +55,7 @@ data BeginStmt = LetStmt [Binding]
                | DoStmt  Expression
                deriving Show
 
-data Grammar = Epsilon
-             | GConstant Constant
-             | GIdentifier Identifier
-             | GBindingName BindingName
-             | GType Type
-             | GPatternStmt PatternStmt
-             | GFactor Factor
-             | GAddOp AddOp
-             | GMulOp MulOp
-             | GTerm Term
-             | GExpression Expression
-             | GBinding Binding
-             | GBeginStmt BeginStmt
-             | GProgram [BeginStmt]
+data Program = Epsilon
+             | Prog [BeginStmt]
              deriving Show
 
