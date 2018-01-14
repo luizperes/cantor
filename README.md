@@ -12,12 +12,12 @@
 let
   numberSet = for all x subset of Z: x
   square = for all x in numberSet: x ^ 2
-  isEven = for all n in numberSet: (x % 2) = 0
-  thereIsANumberGreaterThan10 = there exists n in : n > 10
+  allEven = for all n in numberSet: (x % 2) = 0
+  ifThereIsANumberGreaterThan10 = there exists n in numberSet: n > 10
 do
   square .
-  isEven .
-  theresIsANumberGreaterThan10 .
+  allEven .
+  ifTheresIsANumberGreaterThan10 .
   {2, 4, 6, 8, 10, 12}
 ```
 
