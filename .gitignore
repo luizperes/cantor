@@ -1,3 +1,7 @@
+*
+!/**/
+!*.*
+
 dist
 dist-*
 cabal-dev
