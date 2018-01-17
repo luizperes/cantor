@@ -1,0 +1,10 @@
+let
+  numberSet = for all x subset of Z: x
+  square = for all x in numberSet: x ^ 2
+  allEven = for all n in numberSet: (x % 2) = 0
+  ifThereIsANumberGreaterThan10 = there exists n in numberSet: n > 10
+do
+  square .
+  allEven .
+  ifTheresIsANumberGreaterThan10 .
+  {2, 4, 6, 8, 10, 12}

@@ -7,5 +7,5 @@ main = do
   srcText <- readFile fileName
   {- hPutStr stdout (unlines (matching (lines srcText))) -}
   case (matching (lines srcText)) of
-       True -> hPutStr stdout "True"
-       _    -> hPutStr stdout "False"
+       True -> hPutStr stdout "True\n"
+       _    -> hPutStr stdout "False\n"

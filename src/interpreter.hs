@@ -5,7 +5,9 @@ import Grammar
 
 parseMain :: [Char] -> Maybe BeginStmt
 parseMain line = case line of
-                      _ -> Nothing
+                     'l':'e':'t':xs -> Just (LetStmt [])
+                     'd':'o':xs -> Just(DoStmt (ETerm (TFactor (FConst (StringLit "Blah")))))
+                     _ -> Nothing
 
 parse :: [[Char]] -> [BeginStmt]
 parse lines = case lines of
