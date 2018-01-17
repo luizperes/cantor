@@ -8,7 +8,7 @@
 - The models will probably change once the grammar is not (yet) complete.
 
 #### Example
-```
+```Haskell
 let
   numberSet = for all x subset of Z: x
   square = for all x in numberSet: x ^ 2
@@ -92,7 +92,8 @@ binding ::= binding_name ':' pattern_stmt expression (',' expression)* '.'
 ###### pattern_stmt
 ```EBNF
 pattern_stmt ::= for_all_stmt
-               | there_exists_stmt | binding_name
+               | there_exists_stmt
+               | binding_name
 ```
 <p align="left">
   <a href="">
@@ -126,6 +127,7 @@ type ::= 'Z'
        | 'N'
        | 'R'
        | "Universe"
+       | identifier
 ```
 <p align="left">
   <a href="">
@@ -199,8 +201,8 @@ float ::= digit+ '.' digit
 ```EBNF
 digit ::= '0'
         | '1'
-        | "..." |
-        '9'
+        | "..."
+        | '9'
 ```
 <p align="left">
   <a href="">
@@ -212,11 +214,11 @@ digit ::= '0'
 ```EBNF
 letter ::= 'a' 
          | 'b'
-         | "..." |
-         'z' |
-         'A' |
-         ".." |
-         'Z'
+         | "..."
+         | 'z'
+         | 'A'
+         | ".."
+         | 'Z'
 ```
 <p align="left">
   <a href="">
@@ -233,7 +235,7 @@ start_symbol ::= '~'
                |'$'
                | '_'
                | '?'
-               |  ('+' | '-' | '*' | '/' | '^' | '%' | '>' | '<' | '=') start_symbol+
+               | ('+' | '-' | '*' | '/' | '^' | '%' | '>' | '<' | '=') start_symbol+
 ```
 <p align="left">
   <a href="">
