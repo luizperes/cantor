@@ -3,18 +3,21 @@ module Interpreter where
 import System.Environment
 import Grammar
 
-parseMain :: [Char] -> Maybe BeginStmt
+data Result a = Success a
+              | Failure [Char]
+
+parseMain :: [Char] -> Result BeginStmt
 parseMain line = case line of
-                     'l':'e':'t':xs -> Just (LetStmt [])
-                     'd':'o':xs -> Just(DoStmt (ETerm (TFactor (FConst (StringLit "Blah")))))
-                     _ -> Nothing
+                     'l':'e':'t':xs -> Success (LetStmt [])
+                     'd':'o':xs -> Success (DoStmt (ETerm (TFactor (FConst (StringLit "Blah")))))
+                     _ -> Failure "Only `let' and `do' are valid initial statements"
 
 parse :: [[Char]] -> [BeginStmt]
 parse lines = case lines of
                    [] -> []
                    (x:xs) -> case (parseMain x) of
-                                  Just l -> l : (parse xs)
-                                  _ -> []
+                                  Success l -> l : (parse xs)
+                                  Failure c -> []
   
 
 exec :: Program -> Bool
