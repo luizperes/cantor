@@ -1,7 +1,26 @@
 module Interpreter where
 
 import System.Environment
+import Data.Char
 import Grammar
+
+trim xs = dropSpaceTail "" $ dropWhile isSpace xs
+
+dropSpaceTail maybeStuff "" = ""
+dropSpaceTail maybeStuff (x:xs)
+  | isSpace x = dropSpaceTail (x:maybeStuff) xs
+  | null maybeStuff = x : dropSpaceTail "" xs
+  | otherwise       = reverse maybeStuff ++ x : dropSpaceTail "" xs
+
+matchStr :: [Char] -> [Char] -> Bool
+matchStr _ [] = False
+matchStr [] _ = False
+matchStr (' ':xs) (y:ys)
+  | isSpace y =  matchStr xs (trim ys)
+  | otherwise = False
+matchStr (x:xs) (y:ys)
+  | x == y = matchStr xs ys
+  | otherwise = False
 
 parseMain :: [Char] -> Result BeginStmt
 parseMain line =
