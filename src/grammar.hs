@@ -55,7 +55,10 @@ data BeginStmt = LetStmt [Binding]
                | DoStmt  Expression
                deriving Show
 
+data Fail = Failure [Char] deriving Show
+type Result a = Either a Fail
+
 data Program = Epsilon
-             | Prog [BeginStmt]
+             | Prog [Result BeginStmt]
              deriving Show
 
