@@ -12,22 +12,22 @@ dropSpaceTail maybeStuff (x:xs)
   | null maybeStuff = x : dropSpaceTail "" xs
   | otherwise       = reverse maybeStuff ++ x : dropSpaceTail "" xs
 
-matchStr :: [Char] -> [Char] -> Bool
-matchStr _ [] = False
-matchStr [] _ = False
+matchStr :: [Char] -> [Char] -> Result [Char]
+matchStr _ [] = Right(Failure "End of String was found before matching.")
+matchStr [] input = Left(input)
 matchStr (' ':xs) (y:ys)
-  | isSpace y =  matchStr xs (trim ys)
-  | otherwise = False
+  | isSpace y = matchStr xs (trim ys)
+  | otherwise = Right(Failure("Looking for white spaces but found:" ++ (y:ys) ++ "."))
 matchStr (x:xs) (y:ys)
   | x == y = matchStr xs ys
-  | otherwise = False
+  | otherwise = Right(Failure((x:[]) ++ " does not match with " ++ (y:[]) ++ " on " ++ ys))
 
 parseMain :: [Char] -> Result BeginStmt
 parseMain line =
   case line of
     'l':'e':'t':xs -> Left(LetStmt [])
     'd':'o':xs -> Left(DoStmt (ETerm (TFactor (FConst (StringLit "Blah")))))
-    _ -> Right(Failure "Only `let' and `do' are valid initial statements")
+    _ -> Right(Failure "Only `let' and `do' are valid initial statements.")
 
 parse :: [[Char]] -> [Result BeginStmt]
 parse [] = []
