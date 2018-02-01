@@ -26,6 +26,9 @@ do
 {4, 16, 36, 64, 100, 144}
 ```
 
+#### Dependencies
+  - `parsec`: Install with the command: `cabal install parsec`
+
 #### EBNF RailRoad Diagram
 ###### do_stmt
 ```EBNF

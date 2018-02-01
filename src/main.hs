@@ -5,7 +5,4 @@ import Interpreter
 main = do
   [fileName] <- getArgs
   srcText <- readFile fileName
-  {- hPutStr stdout (unlines (matching (lines srcText))) -}
-  case (matching (lines srcText)) of
-       True -> hPutStr stdout "True\n"
-       _    -> hPutStr stdout "False\n"
+  parseFile srcText

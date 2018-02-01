@@ -1,46 +1,67 @@
 module Interpreter where
 
 import System.Environment
-import Data.Char
+import Control.Monad
+import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec.Expr
+import Text.ParserCombinators.Parsec.Language
+import qualified Text.ParserCombinators.Parsec.Token as Token
 import Grammar
 
-trim xs = dropSpaceTail "" $ dropWhile isSpace xs
+languageDef =
+  emptyDef { Token.commentStart    = "/'"
+           , Token.commentEnd      = "'/"
+           , Token.commentLine     = "#"
+           , Token.identStart      = letter
+           , Token.identLetter     = alphaNum
+           , Token.reservedNames   = [ "let"
+                                     , "do"
+                                     , "for"
+                                     , "all"
+                                     , "there"
+                                     , "exists"
+                                     , "true"
+                                     , "subset"
+                                     , "set"
+                                     , "in"
+                                     ]
+           , Token.reservedOpNames = [ "+", "-", "*", "/", "%"
+                                     , "<", ">", ">=", "<="
+                                     , "=", "~"
+                                     ]
+           }
 
-dropSpaceTail maybeStuff "" = ""
-dropSpaceTail maybeStuff (x:xs)
-  | isSpace x = dropSpaceTail (x:maybeStuff) xs
-  | null maybeStuff = x : dropSpaceTail "" xs
-  | otherwise       = reverse maybeStuff ++ x : dropSpaceTail "" xs
+lexer = Token.makeTokenParser languageDef
 
-matchStr :: [Char] -> [Char] -> Result [Char]
-matchStr _ [] = Right(Failure "End of String was found before matching.")
-matchStr [] input = Left(input)
-matchStr (' ':xs) (y:ys)
-  | isSpace y = matchStr xs (trim ys)
-  | otherwise = Right(Failure("Looking for white spaces but found:" ++ (y:ys) ++ "."))
-matchStr (x:xs) (y:ys)
-  | x == y = matchStr xs ys
-  | otherwise = Right(Failure((x:[]) ++ " does not match with " ++ (y:[]) ++ " on " ++ ys))
+identifier = Token.identifier lexer -- parses an identifier
+reserved   = Token.reserved   lexer -- parses a reserved name
+reservedOp = Token.reservedOp lexer -- parses an operator
+parens     = Token.parens     lexer -- parses surrounding parenthesis:
+                                    -- parens p
+                                    -- takes care of the parenthesis and
+                                    -- uses p to parse what's inside them
+integer    = Token.integer    lexer -- parses an integer
+whiteSpace = Token.whiteSpace lexer -- parses whitespace
 
-parseMain :: [Char] -> Result BeginStmt
-parseMain line =
-  case line of
-    'l':'e':'t':xs -> Left(LetStmt [])
-    'd':'o':xs -> Left(DoStmt (ETerm (TFactor (FConst (StringLit "Blah")))))
-    _ -> Right(Failure "Only `let' and `do' are valid initial statements.")
+parse' :: Parser [BeginStmt]
+parse' = whiteSpace >> (many statement')
 
-parse :: [[Char]] -> [Result BeginStmt]
-parse [] = []
-parse (x:xs) =
-  case (parseMain x) of
-    Left l -> Left (l) : (parse xs)
-    Right (Failure f) -> Right (Failure f) : parse (xs)
+letStmt :: Parser BeginStmt
+letStmt =
+  do reserved "let"
+     return $ LetStmt []
 
-exec :: Program -> Bool
-exec p = True
+doStmt :: Parser BeginStmt
+doStmt =
+  do reserved "do"
+     return $ DoStmt (ETerm (TFactor (FConst (StringLit "Blah"))))
 
-matching :: [[Char]] -> Bool
-matching lines =
-  case parse lines of
-    [] -> False
-    p  ->  exec (Prog p)
+statement' :: Parser BeginStmt
+statement' =   letStmt
+           <|> doStmt
+
+parseFile :: String -> IO () -- Program
+parseFile file =
+  case parse parse' "" file of
+    Left e  -> print e >> fail "parse error"
+    Right r -> print r -- return (Prog r)
