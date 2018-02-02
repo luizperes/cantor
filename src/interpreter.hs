@@ -8,6 +8,9 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 import Grammar
 
+data Fail = Failure [Char] deriving Show
+type Result a = Either a Fail
+
 languageDef =
   emptyDef { Token.commentStart    = "/'"
            , Token.commentEnd      = "'/"
@@ -63,5 +66,5 @@ statement' =   letStmt
 parseFile :: String -> IO () -- Program
 parseFile file =
   case parse parse' "" file of
-    Left e  -> print e >> fail "parse error"
+    Left e  -> print e
     Right r -> print r -- return (Prog r)
