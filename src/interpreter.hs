@@ -8,8 +8,9 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 import Grammar
 
-data Fail = Failure [Char] deriving Show
-type Result a = Either a Fail
+data Result a = Success a
+              | Failure [Char]
+              deriving Show
 
 languageDef =
   emptyDef { Token.commentStart    = "/'"
@@ -46,22 +47,28 @@ parens     = Token.parens     lexer -- parses surrounding parenthesis:
 integer    = Token.integer    lexer -- parses an integer
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 
-parse' :: Parser [BeginStmt]
-parse' = whiteSpace >> (many statement')
+parse' :: Parser [Result BeginStmt]
+parse' = whiteSpace >> (many1 statement')
 
-letStmt :: Parser BeginStmt
+letStmt :: Parser (Result BeginStmt)
 letStmt =
   do reserved "let"
-     return $ LetStmt []
+     return $ Success(LetStmt [])
 
-doStmt :: Parser BeginStmt
+doStmt :: Parser (Result BeginStmt)
 doStmt =
   do reserved "do"
-     return $ DoStmt (ETerm (TFactor (FConst (StringLit "Blah"))))
+     return $ Success(DoStmt(ETerm(TFactor(FConst(StringLit "Blah")))))
 
-statement' :: Parser BeginStmt
+endOrFail :: [Char] -> Parser (Result a)
+endOrFail what =
+  do eof
+     return $ Failure (what)
+
+statement' :: Parser (Result BeginStmt)
 statement' =   letStmt
            <|> doStmt
+           <|> endOrFail "End of file not found"
 
 parseFile :: String -> IO () -- Program
 parseFile file =
