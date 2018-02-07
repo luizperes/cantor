@@ -48,7 +48,7 @@ integer    = Token.integer    lexer -- parses an integer
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 
 parse' :: Parser [Result BeginStmt]
-parse' = whiteSpace >> (many1 statement')
+parse' = whiteSpace >> ((many1 statement') <|> (many (endOrFail "Blah")))
 
 letStmt :: Parser (Result BeginStmt)
 letStmt =
@@ -62,13 +62,11 @@ doStmt =
 
 endOrFail :: [Char] -> Parser (Result a)
 endOrFail what =
-  do eof
-     return $ Failure (what)
+  do return $ Failure (what)
 
 statement' :: Parser (Result BeginStmt)
 statement' =   letStmt
            <|> doStmt
-           <|> endOrFail "End of file not found"
 
 parseFile :: String -> IO () -- Program
 parseFile file =
