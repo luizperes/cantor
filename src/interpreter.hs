@@ -48,21 +48,18 @@ integer    = Token.integer    lexer -- parses an integer
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 
 parse' :: Parser [Result BeginStmt]
-parse' = whiteSpace >> many1 statement'
+parse' =  whiteSpace
+       >> many1 statement'
 
 letStmt :: Parser (Result BeginStmt)
-letStmt =
-  do reserved "let"
-     return $ Success(LetStmt [])
+letStmt = do
+  reserved "let"
+  return $ Success(LetStmt [])
 
 doStmt :: Parser (Result BeginStmt)
-doStmt =
-  do reserved "do"
-     return $ Success(DoStmt(ETerm(TFactor(FConst(StringLit "Blah")))))
-
-endOrFail :: [Char] -> Parser (Result a)
-endOrFail what =
-  do return $ Failure (what)
+doStmt = do
+  reserved "do"
+  return $ Success(DoStmt(ETerm(TFactor(FConst(StringLit "Blah")))))
 
 statement' :: Parser (Result BeginStmt)
 statement' =   letStmt
