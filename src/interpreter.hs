@@ -8,10 +8,6 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 import Grammar
 
-data Result a = Success a
-              | Failure [Char]
-              deriving Show
-
 languageDef =
   emptyDef { Token.commentStart    = "/'"
            , Token.commentEnd      = "'/"
@@ -47,21 +43,21 @@ parens     = Token.parens     lexer -- parses surrounding parenthesis:
 integer    = Token.integer    lexer -- parses an integer
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 
-parse' :: Parser [Result BeginStmt]
+parse' :: Parser [BeginStmt]
 parse' =  whiteSpace
        >> many1 statement'
 
-letStmt :: Parser (Result BeginStmt)
+letStmt :: Parser BeginStmt
 letStmt = do
   reserved "let"
-  return $ Success(LetStmt [])
+  return $ LetStmt []
 
-doStmt :: Parser (Result BeginStmt)
+doStmt :: Parser BeginStmt
 doStmt = do
   reserved "do"
-  return $ Success(DoStmt(ETerm(TFactor(FConst(StringLit "Blah")))))
+  return $ DoStmt(ETerm(TFactor(FConst(StringLit "Blah"))))
 
-statement' :: Parser (Result BeginStmt)
+statement' :: Parser BeginStmt
 statement' =   letStmt
            <|> doStmt
 
