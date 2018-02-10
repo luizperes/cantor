@@ -27,6 +27,20 @@ do
 {4, 16, 36, 64, 100, 144}
 ```
 
+The code above can also be written:
+```
+let
+  numberSet = ∀x ⊆ Z: x
+  square = ∀x ∈ numberSet: x ^ 2
+  allEven = ∀n ∈ numberSet: (x % 2) = 0
+  ifThereIsANumberGreaterThan10 = ∃n ⊆ numberSet: n > 10
+do
+  square .
+  allEven .
+  ifTheresIsANumberGreaterThan10 .
+  {2, 4, 6, 8, 10, 12}
+```
+
 #### Dependencies
   - `parsec`: Install with the command: `cabal install parsec`
 
