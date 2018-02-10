@@ -8,6 +8,9 @@
 #### Current Info
 - The models will probably change once the grammar is not (yet) complete.
 
+#### Dependencies
+  - `parsec`: Install with the command: `cabal install parsec`
+
 #### Example
 ```Haskell
 let
@@ -22,13 +25,8 @@ do
   {2, 4, 6, 8, 10, 12}
 ```
 
-###### output
-```
-{4, 16, 36, 64, 100, 144}
-```
-
 The code above can also be written:
-```
+```Haskell
 let
   numberSet = ∀x ⊆ Z: x
   square = ∀x ∈ numberSet: x ^ 2
@@ -41,8 +39,10 @@ do
   {2, 4, 6, 8, 10, 12}
 ```
 
-#### Dependencies
-  - `parsec`: Install with the command: `cabal install parsec`
+###### output
+```
+{4, 16, 36, 64, 100, 144}
+```
 
 #### EBNF RailRoad Diagram
 ###### do_stmt
