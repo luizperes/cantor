@@ -2,6 +2,7 @@ module Interpreter where
 
 import System.Environment
 import Control.Monad
+import Control.Applicative hiding ((<|>))
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Text.ParserCombinators.Parsec.Language
