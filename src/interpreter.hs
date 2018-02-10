@@ -13,8 +13,11 @@ languageDef =
   emptyDef { Token.commentStart    = "/'"
            , Token.commentEnd      = "'/"
            , Token.commentLine     = "#"
-           , Token.identStart      = letter
-           , Token.identLetter     = alphaNum
+           , Token.identStart      =   letter
+                                   <|> start_symbol
+           , Token.identLetter     =   alphaNum
+                                   <|> start_symbol
+                                   <|> other_symbol
            , Token.reservedNames   = [ "let"
                                      , "do"
                                      , "for"
@@ -26,11 +29,14 @@ languageDef =
                                      , "set"
                                      , "in"
                                      ]
-           , Token.reservedOpNames = [ "+", "-", "*", "/", "%"
+           , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , "<", ">", ">=", "<="
                                      , "=", "~"
                                      ]
            }
+
+start_symbol = oneOf "!@#$_?"
+other_symbol = oneOf "+-*/%^<>=~"
 
 lexer = Token.makeTokenParser languageDef
 
@@ -51,7 +57,8 @@ parse' =  whiteSpace
 letStmt :: Parser BeginStmt
 letStmt = do
   reserved "let"
-  return $ LetStmt []
+  binds <- (many1 binding')
+  return $ LetStmt binds
 
 doStmt :: Parser BeginStmt
 doStmt = do
@@ -61,6 +68,11 @@ doStmt = do
 statement' :: Parser BeginStmt
 statement' =   letStmt
            <|> doStmt
+
+binding' :: Parser Binding
+binding' = do
+  id <- identifier
+  return $ BBind (BId (IId id)) (BindingStmt (BId (IId "blau"))) []
 
 parseWithEof :: Parser a -> String -> Either ParseError a
 parseWithEof p = parse (p <* eof) ""
