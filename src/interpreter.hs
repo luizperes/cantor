@@ -47,7 +47,9 @@ parens     = Token.parens     lexer -- parses surrounding parenthesis:
                                     -- parens p
                                     -- takes care of the parenthesis and
                                     -- uses p to parse what's inside them
-integer    = Token.integer    lexer -- parses an integer
+integer    = Token.integer    lexer -- parses an integer number
+natural    = Token.natural    lexer -- parses a natural number
+float      = Token.float      lexer -- parses a floating number
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 
 parse' :: Parser [BeginStmt]
@@ -72,6 +74,7 @@ statement' =   letStmt
 binding' :: Parser Binding
 binding' = do
   id <- identifier
+  reserved "="
   return $ BBind (BId (IId id)) (BindingStmt (BId (IId "blau"))) []
 
 parseWithEof :: Parser a -> String -> Either ParseError a

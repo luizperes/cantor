@@ -1,5 +1,6 @@
-# haskell-chan
-> A teeny-tiny functional programming language not at all based on Haskell.
+# Impero 
+> Impero is inspired on set comprehensions and discrete math. Its name derives from the so-famous phrase "divide and conquer"
+> (from Latin dīvide et imperā, hence impero : to give orders, command / to rule, hold sway).
 
 #### Main Goal
 - Write an interpreter in Haskell and therefore, learn it.
