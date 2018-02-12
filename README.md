@@ -31,7 +31,7 @@ let
   numberSet = ∀x ⊆ Z: x
   square = ∀x ∈ numberSet: x ^ 2
   allEven = ∀n ∈ numberSet: (x % 2) = 0
-  ifThereIsANumberGreaterThan10 = ∃n ⊆ numberSet: n > 10
+  ifThereIsANumberGreaterThan10 = ∃n ∈ numberSet: n > 10
 do
   square .
   allEven .

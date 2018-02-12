@@ -24,18 +24,23 @@ languageDef =
                                      , "all"
                                      , "there"
                                      , "exists"
-                                     , "true"
                                      , "subset"
-                                     , "set"
+                                     , "of"
                                      , "in"
+                                     , "N"
+                                     , "Z"
+                                     , "R"
+                                     , "Universe"
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , "<", ">", ">=", "<="
                                      , "=", "~"
+                                     , "∀", "∃", "∈", "⊆"
                                      ]
+           , caseSensitive         = True
            }
 
-start_symbol = oneOf "!@#$_?"
+start_symbol = oneOf "!@#$_?|"
 other_symbol = oneOf "+-*/%^<>=~"
 
 lexer = Token.makeTokenParser languageDef
@@ -56,26 +61,76 @@ parse' :: Parser [BeginStmt]
 parse' =  whiteSpace
        >> many1 statement'
 
-letStmt :: Parser BeginStmt
-letStmt = do
+letStmt' :: Parser BeginStmt
+letStmt' = do
   reserved "let"
   binds <- (many1 binding')
   return $ LetStmt binds
 
-doStmt :: Parser BeginStmt
-doStmt = do
+doStmt' :: Parser BeginStmt
+doStmt' = do
   reserved "do"
   return $ DoStmt(ETerm(TFactor(FConst(StringLit "Blah"))))
 
 statement' :: Parser BeginStmt
-statement' =   letStmt
-           <|> doStmt
+statement' =   letStmt'
+           <|> doStmt'
 
 binding' :: Parser Binding
 binding' = do
+  bindName <- bindingName'
+  reservedOp "="
+  pattern <- patternStmt'
+  return $ BBind bindName pattern []
+
+bindingName' :: Parser BindingName
+bindingName' = do
   id <- identifier
-  reserved "="
-  return $ BBind (BId (IId id)) (BindingStmt (BId (IId "blau"))) []
+  return $ BId (IId id)
+
+patternStmt' :: Parser PatternStmt
+patternStmt' =   forAllStmt'
+             <|> thereExistsStmt'
+
+forAllStmt' :: Parser PatternStmt
+forAllStmt' = do
+  ((reserved "for" >> reserved "all") <|> reservedOp "∀")
+  bindName <- bindingName'
+  relation <- relationship'
+  ty <- type'
+  return $ ForAllStmt bindName relation ty
+
+thereExistsStmt' :: Parser PatternStmt
+thereExistsStmt' = do
+  ((reserved "there" >> reserved "exists") <|> reservedOp "∃")
+  bindName <- bindingName'
+  relation <- relationship'
+  ty <- type'
+  return $ ThereExistsStmt bindName relation ty
+
+relationship' :: Parser Relationship
+relationship' =   subsetOf'
+              <|> elementOf'
+
+subsetOf' =  ((reserved "subset" >> reserved "of")
+          <|>  reservedOp "⊆")
+          >> return SubsetOf
+elementOf' = (reserved "in" <|> reservedOp "∈") >> return ElementOf
+
+type' :: Parser Type
+type' =   typeN'
+      <|> typeZ'
+      <|> typeR'
+      <|> typeUniverse'
+      <|> typeCustom'
+
+typeN' = reserved "N" >> return N
+typeZ' = reserved "Z" >> return Z
+typeR' = reserved "R" >> return R
+typeUniverse' = reserved "Universe" >> return Universe
+typeCustom' = do
+  bindName <- bindingName'
+  return $ CustomType bindName
 
 parseWithEof :: Parser a -> String -> Either ParseError a
 parseWithEof p = parse (p <* eof) ""

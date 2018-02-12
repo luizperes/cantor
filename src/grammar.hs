@@ -17,12 +17,15 @@ data Type = N
           | Z
           | R
           | Universe
-          | Custom Identifier
+          | CustomType BindingName
           deriving Show
 
-data PatternStmt = ForAllStmt BindingName Type
-                 | ThereExistsStmt BindingName Type
-                 | BindingStmt BindingName
+data Relationship = SubsetOf
+                  | ElementOf
+                  deriving Show
+
+data PatternStmt = ForAllStmt BindingName Relationship Type
+                 | ThereExistsStmt BindingName Relationship Type
                  deriving Show
 
 data Factor = FConst  Constant
