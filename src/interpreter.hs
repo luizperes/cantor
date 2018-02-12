@@ -34,7 +34,7 @@ languageDef =
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , "<", ">", ">=", "<="
-                                     , "=", "~"
+                                     , "=", "~", ":"
                                      , "∀", "∃", "∈", "⊆"
                                      ]
            , caseSensitive         = True
@@ -81,6 +81,7 @@ binding' = do
   bindName <- bindingName'
   reservedOp "="
   pattern <- patternStmt'
+  reservedOp ":"
   return $ BBind bindName pattern []
 
 bindingName' :: Parser BindingName
