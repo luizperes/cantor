@@ -1,9 +1,12 @@
 let
-  !=   = for all n ∈ N:
-  |=   = ∀x in Z:
+  !    = for all n ∈ N:
+  |    = ∀x in Z:
   !>   =∀x subset of N   :
   jaca = there exists y ⊆  Z :
   _    = ∃ y ⊆ R:
-  hul  = for all l subset of blah:
+  hul  = for all l subset of Universe:
   _ds  = there exists a subset of blau:
 do
+  jaca.bla
+.
+{2,2.0,-2       ,   2 }

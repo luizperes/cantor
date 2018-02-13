@@ -34,14 +34,14 @@ languageDef =
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , "<", ">", ">=", "<="
-                                     , "=", "~", ":"
+                                     , "=", "~"
                                      , "∀", "∃", "∈", "⊆"
                                      ]
            , caseSensitive         = True
            }
 
-start_symbol = oneOf "!@#$_?|"
-other_symbol = oneOf "+-*/%^<>=~"
+start_symbol = oneOf "!@$_?|"
+other_symbol = oneOf "+-*/%^<>~"
 
 lexer = Token.makeTokenParser languageDef
 
@@ -56,6 +56,10 @@ integer    = Token.integer    lexer -- parses an integer number
 natural    = Token.natural    lexer -- parses a natural number
 float      = Token.float      lexer -- parses a floating number
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
+symbol     = Token.symbol     lexer -- parses symbols
+
+commaSep p = p `sepBy` (symbol ",")
+braces p   = between (symbol "{") (symbol "}") p
 
 parse' :: Parser [BeginStmt]
 parse' =  whiteSpace
@@ -70,7 +74,46 @@ letStmt' = do
 doStmt' :: Parser BeginStmt
 doStmt' = do
   reserved "do"
-  return $ DoStmt(ETerm(TFactor(FConst(StringLit "Blah"))))
+  fcall <- functionCall'
+  return $ DoStmt fcall
+
+functionCall' :: Parser FunctionCall
+functionCall' =   singleFunctionCall'
+              <|> nestedFunctionCall'
+
+singleFunctionCall' :: Parser FunctionCall
+singleFunctionCall' = do
+  set <- set'
+  return $ FCSingle set
+
+nestedFunctionCall' :: Parser FunctionCall
+nestedFunctionCall' = do
+  bindName <- bindingName'
+  symbol "."
+  result <- (singleFunctionCall' <|> nestedFunctionCall')
+  return $ FCNested bindName result
+
+set' :: Parser Set
+set' = do
+  list <- braces (commaSep constant')
+  return $ SetLit list
+
+constant' :: Parser Constant
+constant' = try
+              floatLit'
+          <|> naturalLit'
+          <|> intLit'
+
+floatLit' :: Parser Constant
+floatLit' = do
+  f <- float
+  return $ FloatLit f
+
+naturalLit' :: Parser Constant
+naturalLit' = (natural >>= (\n -> return $ NatLit n))
+
+intLit' :: Parser Constant
+intLit' = (integer >>= (\i -> return $ IntLit i))
 
 statement' :: Parser BeginStmt
 statement' =   letStmt'
@@ -79,9 +122,9 @@ statement' =   letStmt'
 binding' :: Parser Binding
 binding' = do
   bindName <- bindingName'
-  reservedOp "="
+  symbol "="
   pattern <- patternStmt'
-  reservedOp ":"
+  symbol ":"
   return $ BBind bindName pattern []
 
 bindingName' :: Parser BindingName

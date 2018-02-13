@@ -3,9 +3,13 @@ module Grammar where
 import System.Environment
 
 data Constant = StringLit [Char]
-              | FloatLit Float
-              | IntLit   Int
+              | FloatLit  Double
+              | IntLit    Integer
+              | NatLit    Integer
               deriving Show
+
+data Set = SetLit [Constant]
+         deriving Show
 
 data Identifier = IId String
                 deriving Show
@@ -29,8 +33,7 @@ data PatternStmt = ForAllStmt BindingName Relationship Type
                  deriving Show
 
 data Factor = FConst  Constant
-            | FBind   BindingName Factor
-            | FParens Factor
+            | FParens Expression
             deriving Show
 
 data AddOp = Add
@@ -54,8 +57,12 @@ data Expression = ETerm Term
 data Binding = BBind BindingName PatternStmt [Expression]
              deriving Show
 
+data FunctionCall = FCSingle Set
+                  | FCNested BindingName FunctionCall
+                  deriving Show
+
 data BeginStmt = LetStmt [Binding]
-               | DoStmt  Expression
+               | DoStmt  FunctionCall
                deriving Show
 
 data Program = Epsilon
