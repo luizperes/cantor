@@ -6,6 +6,9 @@ let
   _    = ∃ y ⊆ R:
   hul  = for all l subset of Universe:
   _ds  = there exists a subset of blau:
+  jao  = there exists a subset of blau, j in N:
+  aaa  = ∀(x⊆ R, y ∈ N):
+  bbb  = ∃ y ⊆ R, x ∈ Z:
 do
   jaca.bla
 .

@@ -28,8 +28,11 @@ data Relationship = SubsetOf
                   | ElementOf
                   deriving Show
 
-data PatternStmt = ForAllStmt BindingName Relationship Type
-                 | ThereExistsStmt BindingName Relationship Type
+data BindingType = BType BindingName Relationship Type
+                 deriving Show
+
+data PatternStmt = ForAllStmt [BindingType]
+                 | ThereExistsStmt [BindingType]
                  deriving Show
 
 data Factor = FConst  Constant

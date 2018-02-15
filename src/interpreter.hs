@@ -139,18 +139,21 @@ patternStmt' =   forAllStmt'
 forAllStmt' :: Parser PatternStmt
 forAllStmt' = do
   ((reserved "for" >> reserved "all") <|> reservedOp "∀")
-  bindName <- bindingName'
-  relation <- relationship'
-  ty <- type'
-  return $ ForAllStmt bindName relation ty
+  bindTypes <- (parens (commaSep bindingType') <|> (commaSep bindingType'))
+  return $ ForAllStmt bindTypes
 
 thereExistsStmt' :: Parser PatternStmt
 thereExistsStmt' = do
   ((reserved "there" >> reserved "exists") <|> reservedOp "∃")
+  bindTypes <- (parens (commaSep bindingType') <|> (commaSep bindingType'))
+  return $ ThereExistsStmt bindTypes
+
+bindingType' :: Parser BindingType
+bindingType' = do
   bindName <- bindingName'
   relation <- relationship'
   ty <- type'
-  return $ ThereExistsStmt bindName relation ty
+  return $ BType bindName relation ty
 
 relationship' :: Parser Relationship
 relationship' =   subsetOf'
