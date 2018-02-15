@@ -1,0 +1,3 @@
+let
+  head = there exists x in Universe: x
+  tail = there exists y subset of Universe: head . {1,2,3}

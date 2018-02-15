@@ -35,7 +35,7 @@ languageDef =
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , "<", ">", ">=", "<="
                                      , "=", "~"
-                                     , "∀", "∃", "∈", "⊆"
+                                     , "∀", "∃", "∈", "⊆", "∘"
                                      ]
            , caseSensitive         = True
            }
@@ -89,7 +89,7 @@ singleFunctionCall' = do
 nestedFunctionCall' :: Parser FunctionCall
 nestedFunctionCall' = do
   bindName <- bindingName'
-  symbol "."
+  (symbol "." <|> symbol "∘")
   result <- (singleFunctionCall' <|> nestedFunctionCall')
   return $ FCNested bindName result
 
@@ -132,12 +132,36 @@ binding' = do
   symbol "="
   pattern <- patternStmt'
   symbol ":"
-  return $ BBind bindName pattern []
+  exprs <- commaSep expr'
+  return $ BBind bindName pattern exprs
 
 bindingName' :: Parser BindingName
 bindingName' = do
   id <- identifier
   return $ BId (IId id)
+
+expr' :: Parser Expression
+expr' = buildExpressionParser operators' term'
+
+operators' = [ [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
+             , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
+                Infix  (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
+                Infix  (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
+             , [Infix  (reservedOp "+"   >> return (EBinOp Add)) AssocLeft,
+                Infix  (reservedOp "-"   >> return (EBinOp Sub)) AssocLeft]
+             , [Infix  (reservedOp ">"   >> return (EBinOp Gt )) AssocNone,
+                Infix  (reservedOp ">="  >> return (EBinOp GtE)) AssocNone,
+                Infix  (reservedOp "<"   >> return (EBinOp Lt )) AssocNone,
+                Infix  (reservedOp "<="  >> return (EBinOp LtE)) AssocNone]
+             , [Infix  (reservedOp "="   >> return (EBinOp Eq )) AssocNone,
+                Infix  (reservedOp "~"   >> return (EBinOp NEq)) AssocNone]
+              ]
+
+term' :: Parser Expression
+term' =   parens expr'
+      <|> try (liftM EFCall functionCall')
+      <|> liftM EBind bindingName'
+      <|> liftM EConst constant'
 
 patternStmt' :: Parser PatternStmt
 patternStmt' =   forAllStmt'

@@ -34,32 +34,31 @@ data PatternStmt = ForAllStmt [BindingType]
                  | ThereExistsStmt [BindingType]
                  deriving Show
 
-data Factor = FConst  Constant
-            | FParens Expression
-            deriving Show
-
-data AddOp = Add
-           | Sub
-           deriving Show
-
-data MulOp = Mul
-           | Div
-           | Mod
-           | Exp
-           deriving Show
-
-data Term = TFactor Factor
-          | TMFactor Factor MulOp Factor
-          deriving Show
-
-data Expression = ETerm Term
-                | EMTerm Term AddOp Expression
+data Expression = EBinOp BinaryOp Expression Expression
+                | EConst Constant
+                | EFCall FunctionCall
+                | EBind BindingName
                 deriving Show
+
+data BinaryOp = Add
+              | Sub
+              | Mul
+              | Div
+              | Mod
+              | Exp
+              | Eq
+              | NEq
+              | Gt
+              | GtE
+              | Lt
+              | LtE
+              deriving Show
 
 data Binding = BBind BindingName PatternStmt [Expression]
              deriving Show
 
 data FunctionCall = FCSingle Constant
+                  | FCExpr   Expression
                   | FCNested BindingName FunctionCall
                   deriving Show
 
