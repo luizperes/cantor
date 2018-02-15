@@ -6,10 +6,9 @@ data Constant = StringLit [Char]
               | FloatLit  Double
               | IntLit    Integer
               | NatLit    Integer
+              | SetLit    [Constant]
+              | TupleLit  [Constant]
               deriving Show
-
-data Set = SetLit [Constant]
-         deriving Show
 
 data Identifier = IId String
                 deriving Show
@@ -60,7 +59,7 @@ data Expression = ETerm Term
 data Binding = BBind BindingName PatternStmt [Expression]
              deriving Show
 
-data FunctionCall = FCSingle Set
+data FunctionCall = FCSingle Constant
                   | FCNested BindingName FunctionCall
                   deriving Show
 

@@ -93,16 +93,23 @@ nestedFunctionCall' = do
   result <- (singleFunctionCall' <|> nestedFunctionCall')
   return $ FCNested bindName result
 
-set' :: Parser Set
-set' = do
-  list <- braces (commaSep constant')
-  return $ SetLit list
-
 constant' :: Parser Constant
 constant' = try
               floatLit'
           <|> naturalLit'
           <|> intLit'
+          <|> tuple'
+          <|> set'
+
+set' :: Parser Constant
+set' = do
+  list <- braces (commaSep constant')
+  return $ SetLit list
+
+tuple' :: Parser Constant
+tuple' = do
+  list <- parens (commaSep constant')
+  return $ TupleLit list
 
 floatLit' :: Parser Constant
 floatLit' = do
