@@ -2,4 +2,4 @@ let
   head = there exists x in Universe: x
   tail = there exists y subset of Universe: y - (head . y)
 do
-  tail . {1, 2, 3}
+ tail . {1, 2, 3}

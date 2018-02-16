@@ -2,7 +2,8 @@ module Grammar where
 
 import System.Environment
 
-data Constant = StringLit [Char]
+data Constant = Epsilon   [Char]
+              | StringLit [Char]
               | FloatLit  Double
               | IntLit    Integer
               | NatLit    Integer
@@ -11,10 +12,10 @@ data Constant = StringLit [Char]
               deriving Show
 
 data Identifier = IId String
-                deriving Show
+                deriving (Show, Eq)
 
 data BindingName = BId Identifier
-                 deriving Show
+                 deriving (Show, Eq)
 
 data Type = N
           | Z
