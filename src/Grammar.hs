@@ -66,7 +66,6 @@ data BeginStmt = LetStmt [Binding]
                | DoStmt  FunctionCall
                deriving Show
 
-data Program = Epsilon
-             | Prog [BeginStmt]
+data Program = Prog [BeginStmt]
              deriving Show
 

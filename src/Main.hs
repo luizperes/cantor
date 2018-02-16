@@ -1,8 +1,10 @@
 import System.Environment
-import System.IO (stdout,stderr,hPutStr,hPutStrLn)
-import Interpreter
+import System.IO (stdout, stderr, hPutStr, hPutStrLn)
+import Parsing 
 
 main = do
   [fileName] <- getArgs
   srcText <- readFile fileName
-  parseFile srcText
+  case parseFile srcText of
+    Left e -> print e -- error
+    Right r -> print r

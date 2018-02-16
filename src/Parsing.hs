@@ -1,4 +1,4 @@
-module Interpreter where
+module Parsing where
 
 import System.Environment
 import Control.Monad
@@ -224,8 +224,8 @@ typeCustom' = do
 parseWithEof :: Parser a -> String -> Either ParseError a
 parseWithEof p = parse (p <* eof) ""
 
-parseFile :: String -> IO () -- Program
+parseFile :: String -> Either ParseError Program 
 parseFile file =
   case parseWithEof parse' file of
-    Left e  -> print e
-    Right r -> print r -- return (Prog r)
+    Left e  -> Left e
+    Right r -> Right (Prog r)
