@@ -58,7 +58,7 @@ data Binding = BBind BindingName PatternStmt [Expression]
              deriving Show
 
 data FunctionCall = FCSingle Constant
-                  | FCExpr   Expression
+                  | FCExpr   BindingName Expression
                   | FCNested BindingName FunctionCall
                   deriving Show
 

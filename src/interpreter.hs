@@ -86,10 +86,21 @@ singleFunctionCall' = do
   set <- set'
   return $ FCSingle set
 
-nestedFunctionCall' :: Parser FunctionCall
-nestedFunctionCall' = do
+bindingFunctionCall' :: Parser BindingName
+bindingFunctionCall' = do
   bindName <- bindingName'
   (symbol "." <|> symbol "∘")
+  return $ bindName
+
+functionCallExpr' :: Parser FunctionCall
+functionCallExpr' = do
+  bindName <- bindingFunctionCall'
+  expr <- expr'
+  return $ FCExpr bindName expr
+
+nestedFunctionCall' :: Parser FunctionCall
+nestedFunctionCall' = do
+  bindName <- bindingFunctionCall'
   result <- (singleFunctionCall' <|> nestedFunctionCall')
   return $ FCNested bindName result
 
@@ -159,7 +170,7 @@ operators' = [ [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
 
 term' :: Parser Expression
 term' =   parens expr'
-      <|> try (liftM EFCall functionCall')
+      <|> try (liftM EFCall functionCallExpr')
       <|> liftM EBind bindingName'
       <|> liftM EConst constant'
 
