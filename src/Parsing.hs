@@ -114,12 +114,12 @@ constant' = try
 
 set' :: Parser Constant
 set' = do
-  list <- braces (commaSep constant')
+  list <- braces (commaSep expr')
   return $ SetLit list
 
 tuple' :: Parser Constant
 tuple' = do
-  list <- parens (commaSep constant')
+  list <- parens (commaSep expr')
   return $ TupleLit list
 
 floatLit' :: Parser Constant

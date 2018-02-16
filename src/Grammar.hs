@@ -7,8 +7,8 @@ data Constant = Epsilon   [Char]
               | FloatLit  Double
               | IntLit    Integer
               | NatLit    Integer
-              | SetLit    [Constant]
-              | TupleLit  [Constant]
+              | SetLit    [Expression]
+              | TupleLit  [Expression]
               deriving Show
 
 data Identifier = IId String
