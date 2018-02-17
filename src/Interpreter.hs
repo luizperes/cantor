@@ -2,6 +2,7 @@ module Interpreter where
 
 import System.Environment
 import Grammar
+import Unparsing
 
 exec' :: Program -> [Constant]
 exec' (Prog stmts) =
@@ -50,9 +51,7 @@ applyFCall' :: Binding -> [Binding] -> Constant -> Constant
 applyFCall' (BBind bind pattern expr) binds c =
   case checkTypes' (flattenType' pattern [] []) c of
     Left True -> applyExpr' expr pattern binds c
-    Right r -> Epsilon
-      ("Constant `" ++ (show c)  ++ "' because " ++
-      (show r) ++ "' in " ++ (show bind))
+    Right r -> Epsilon (r ++ " in " ++ (unparseBind' bind))
 
 flattenType' :: PatternStmt -> [Type] -> [Relationship] -> ([Type], [Relationship])
 flattenType' (ForAllStmt []) ty rel = (ty, rel)
@@ -63,15 +62,21 @@ flattenType' (ThereExistsStmt ((BType _ r t):xs)) ty rel =
   flattenType' (ThereExistsStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
 
 checkTypes' :: ([Type], [Relationship]) -> Constant -> Either Bool [Char]
+checkTypes' ([], []) _ = Left True
+checkTypes' (t:[], r:[]) c =
+  case matchType' t r c of
+    True -> Left True
+    _ -> Right ("`" ++ (unparseConst' c) ++ "' is not `" ++
+         (unparseRel' r) ++ " " ++ (unparseType' t) ++ "'")
 checkTypes' (tys, rels) cs = Right "Blah"
 
-matchType' :: Type -> Constant -> Bool
-matchType' (Universe) _ = True
-matchType' (N) (NatLit _) = True
-matchType' (Z) (NatLit _) = True
-matchType' (Z) (IntLit _) = True
-matchType' (R) (FloatLit _) = True
-matchType' _ _ = False
+matchType' :: Type -> Relationship -> Constant -> Bool
+matchType' (Universe) _ _ = True
+matchType' (N) _ (NatLit _) = True
+matchType' (Z) _ (NatLit _) = True
+matchType' (Z) _ (IntLit _) = True
+matchType' (R) _ (FloatLit _) = True
+matchType' _ _ _= False
 
 applyExpr' :: [Expression] -> PatternStmt -> [Binding] -> Constant -> Constant
 applyExpr' expr pattern binds c = c

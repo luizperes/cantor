@@ -1,6 +1,7 @@
 import System.Environment
 import System.IO (stdout, stderr, hPutStr, hPutStrLn)
-import Parsing 
+import Parsing
+import Unparsing
 import Interpreter
 
 main = do
@@ -8,4 +9,4 @@ main = do
   srcText <- readFile fileName
   case parseFile srcText of
     Left   err -> print err -- error
-    Right prog -> print (exec' prog)
+    Right prog -> print (unparseConstList' (exec' prog) [])
