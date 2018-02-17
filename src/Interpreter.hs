@@ -47,4 +47,30 @@ apply' _ _ ((BBind (BId(IId id)) _ _):_:[]) _ =
   Epsilon ("Binding `" ++ id ++ "' is duplicated")
 
 applyFCall' :: Binding -> [Binding] -> Constant -> Constant
-applyFCall' _ binds c = c
+applyFCall' (BBind bind pattern expr) binds c =
+  case matchType' (flattenType' pattern []) c of
+    Left True -> applyExpr' expr pattern binds c
+    Right r -> Epsilon
+      ("Constant `" ++ (show c)  ++
+       "' does not match type `" ++
+       (show r) ++ "' in " ++ (show bind))
+
+flattenType' :: PatternStmt -> [Type] -> [Type]
+flattenType' (ForAllStmt []) ty = ty
+flattenType' (ThereExistsStmt []) ty = ty
+flattenType' (ForAllStmt ((BType _ _ x):xs)) ty =
+  flattenType' (ForAllStmt xs) (ty ++ (x:[]))
+flattenType' (ThereExistsStmt ((BType _ _ x):xs)) ty =
+  flattenType' (ThereExistsStmt xs) (ty ++ (x:[]))
+
+matchType' :: [Type] -> Constant -> Either Bool [Char]
+matchType' [] _ = Left True
+matchType' ((Universe):[]) _ = Left True
+matchType' ((N):[]) (NatLit _) = Left True
+matchType' ((Z):[]) (NatLit _) = Left True
+matchType' ((Z):[]) (IntLit _) = Left True
+matchType' ((R):[]) (FloatLit _) = Left True
+matchType' _ _ = Right ("Not implemented")
+
+applyExpr' :: [Expression] -> PatternStmt -> [Binding] -> Constant -> Constant
+applyExpr' expr pattern binds c = c
