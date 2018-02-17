@@ -48,29 +48,30 @@ apply' _ _ ((BBind (BId(IId id)) _ _):_:[]) _ =
 
 applyFCall' :: Binding -> [Binding] -> Constant -> Constant
 applyFCall' (BBind bind pattern expr) binds c =
-  case matchType' (flattenType' pattern []) c of
+  case checkTypes' (flattenType' pattern [] []) c of
     Left True -> applyExpr' expr pattern binds c
     Right r -> Epsilon
-      ("Constant `" ++ (show c)  ++
-       "' does not match type `" ++
-       (show r) ++ "' in " ++ (show bind))
+      ("Constant `" ++ (show c)  ++ "' because " ++
+      (show r) ++ "' in " ++ (show bind))
 
-flattenType' :: PatternStmt -> [Type] -> [Type]
-flattenType' (ForAllStmt []) ty = ty
-flattenType' (ThereExistsStmt []) ty = ty
-flattenType' (ForAllStmt ((BType _ _ x):xs)) ty =
-  flattenType' (ForAllStmt xs) (ty ++ (x:[]))
-flattenType' (ThereExistsStmt ((BType _ _ x):xs)) ty =
-  flattenType' (ThereExistsStmt xs) (ty ++ (x:[]))
+flattenType' :: PatternStmt -> [Type] -> [Relationship] -> ([Type], [Relationship])
+flattenType' (ForAllStmt []) ty rel = (ty, rel)
+flattenType' (ThereExistsStmt []) ty rel = (ty, rel)
+flattenType' (ForAllStmt ((BType _ r t):xs)) ty rel =
+  flattenType' (ForAllStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
+flattenType' (ThereExistsStmt ((BType _ r t):xs)) ty rel =
+  flattenType' (ThereExistsStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
 
-matchType' :: [Type] -> Constant -> Either Bool [Char]
-matchType' [] _ = Left True
-matchType' ((Universe):[]) _ = Left True
-matchType' ((N):[]) (NatLit _) = Left True
-matchType' ((Z):[]) (NatLit _) = Left True
-matchType' ((Z):[]) (IntLit _) = Left True
-matchType' ((R):[]) (FloatLit _) = Left True
-matchType' _ _ = Right ("Not implemented")
+checkTypes' :: ([Type], [Relationship]) -> Constant -> Either Bool [Char]
+checkTypes' (tys, rels) cs = Right "Blah"
+
+matchType' :: Type -> Constant -> Bool
+matchType' (Universe) _ = True
+matchType' (N) (NatLit _) = True
+matchType' (Z) (NatLit _) = True
+matchType' (Z) (IntLit _) = True
+matchType' (R) (FloatLit _) = True
+matchType' _ _ = False
 
 applyExpr' :: [Expression] -> PatternStmt -> [Binding] -> Constant -> Constant
 applyExpr' expr pattern binds c = c
