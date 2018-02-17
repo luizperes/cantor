@@ -6,5 +6,5 @@ let
 do
   square .
   allEven .
-  ifTheresIsANumberGreaterThan10 .
+  ifThereIsANumberGreaterThan10 .
   {2, 4, 6, 8, 10, 12}

@@ -169,10 +169,10 @@ operators' = [ [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
               ]
 
 term' :: Parser Expression
-term' =   parens expr'
-      <|> try (liftM EFCall functionCallExpr')
+term' =   try (liftM EFCall functionCallExpr')
       <|> liftM EBind bindingName'
       <|> liftM EConst constant'
+      <|> parens expr'
 
 patternStmt' :: Parser PatternStmt
 patternStmt' =   forAllStmt'
