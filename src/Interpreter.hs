@@ -32,20 +32,19 @@ interpretFCall' (FCSingle x) _ = x
 interpretFCall' (FCNested n fc) (LetStmt binds) =
   apply'
     n
+    binds
     (filter
       (\bind -> case bind of
         BBind x _ _ -> x == n)
       binds)
     (interpretFCall' fc (LetStmt binds))
 
-apply' :: BindingName -> [Binding] -> Constant -> Constant
-apply' (BId(IId id)) [] _ =
+apply' :: BindingName -> [Binding] -> [Binding] -> Constant -> Constant
+apply' (BId(IId id)) _ [] _ =
   Epsilon ("Binding `" ++ id ++ "' does not exist")
-apply' _ (f:[]) c = applyFCall' f c
-apply' _ ((BBind (BId(IId id)) _ _):_:[]) _ =
+apply' _ binds (f:[]) c = applyFCall' f binds c
+apply' _ _ ((BBind (BId(IId id)) _ _):_:[]) _ =
   Epsilon ("Binding `" ++ id ++ "' is duplicated")
 
-applyFCall' :: Binding -> Constant -> Constant
-applyFCall' _ c = c
-
-
+applyFCall' :: Binding -> [Binding] -> Constant -> Constant
+applyFCall' _ binds c = c
