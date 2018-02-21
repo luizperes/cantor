@@ -6,7 +6,7 @@
   - `parsec`: Install with the command: `cabal install parsec`
 
 #### EBNF and Railroad Diagram
-  - Impero's grammar can be found on the file [EBNF.md](#EBNF.md)
+  - Impero's grammar can be found on the file [EBNF.md](EBNF.md)
 
 #### Example
 ```Haskell

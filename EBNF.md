@@ -28,7 +28,6 @@
   - [set](#set)
   - [tuple](#tuple)
   - [range](#range)
-  - [number](#number)
   - [float](#float)
   - [digit](#digit)
   - [letter](#letter)
@@ -255,7 +254,7 @@ relatioship ::= ("subset" "of" | '⊆')
 ```
 <p align="left">
   <a href="">
-    <img alt="Relationship" src="./img/relationship.png" />
+    <img alt="Relationship" src="./img/relatioship.png" />
   </a>
 </p>
 
@@ -335,18 +334,6 @@ range ::= expr ".." expr
 <p align="left">
   <a href="">
     <img alt="Range" src="./img/range.png" />
-  </a>
-</p>
-
-###### number
-```EBNF
-number ::= '-' number
-         | digit+
-         | float
-```
-<p align="left">
-  <a href="">
-    <img alt="Number" src="./img/number.png" />
   </a>
 </p>
 
