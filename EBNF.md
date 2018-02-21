@@ -417,6 +417,13 @@ start_symbol ::= '!'
 ```
 <p align="left">
   <a href="">
-    <img alt="StartSymbolr" src="./img/start_symbol.png" />
+    <img alt="StartSymbol" src="./img/start_symbol.png" />
+  </a>
+</p>
+
+###### Powered by Railroad Diagram Generator
+<p align="left">
+  <a href="">
+    <img alt="Railroad Diagram Generator" src="./img/rr-1.48.1593.png" />
   </a>
 </p>
