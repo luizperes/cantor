@@ -53,6 +53,7 @@ data BinaryOp = Add
               | GtE
               | Lt
               | LtE
+              | Range
               deriving Show
 
 data Binding = BBind BindingName PatternStmt [Expression]

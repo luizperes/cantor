@@ -33,6 +33,7 @@ languageDef =
                                      , "Universe"
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
+                                     , ".."
                                      , "<", ">", ">=", "<="
                                      , "=", "~"
                                      , "∀", "∃", "∈", "⊆", "∘"
@@ -160,6 +161,7 @@ operators' = [ [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
                 Infix  (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
              , [Infix  (reservedOp "+"   >> return (EBinOp Add)) AssocLeft,
                 Infix  (reservedOp "-"   >> return (EBinOp Sub)) AssocLeft]
+             , [Infix  (reservedOp ".."  >> return (EBinOp Range)) AssocNone]
              , [Infix  (reservedOp ">"   >> return (EBinOp Gt )) AssocNone,
                 Infix  (reservedOp ">="  >> return (EBinOp GtE)) AssocNone,
                 Infix  (reservedOp "<"   >> return (EBinOp Lt )) AssocNone,

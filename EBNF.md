@@ -15,6 +15,7 @@
   - [binding](#binding)
   - [expr](#expr)
   - [relational_expr](#relational_expr)
+  - [range_expr](#range_expr)
   - [additive_expr](#additive_expr)
   - [multiplicative_expr](#multiplicative_expr)
   - [power_expr](#power_expr)
@@ -146,17 +147,29 @@ expr ::= relational_expr
 
 ###### relational\_expr
 ```EBNF
-relational_expr ::= additive_expr
-                  | (relational_expr '>' additive_expr)
-                  | (relational_expr '>=' additive_expr)
-                  | (relational_expr '<' additive_expr)
-                  | (relational_expr '<=' additive_expr)
+relational_expr ::= range_expr
+                  | (relational_expr '>' range_expr)
+                  | (relational_expr '>=' range_expr)
+                  | (relational_expr '<' range_expr)
+                  | (relational_expr '<=' range_expr)
 ```
 <p align="left">
   <a href="">
     <img alt="RelationalExpr" src="./img/relational_expr.png" />
   </a>
 </p>
+
+###### range\_expr
+```EBNF
+range_expr ::= additive_expr
+             | (range_expr '..' additive_expr)
+```
+<p align="left">
+  <a href="">
+    <img alt="RangeExpr" src="./img/range_expr.png" />
+  </a>
+</p>
+
 
 ###### additive\_expr
 ```EBNF
@@ -297,7 +310,6 @@ identifier ::= (letter | start_symbol) (letter | digit | start_symbol | other_sy
 ```EBNF
 constant ::= number
            | char
-           | range
            | tuple
            | set
 ```
