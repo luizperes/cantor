@@ -17,11 +17,12 @@ data Identifier = IId String
 data BindingName = BId Identifier
                  deriving (Show, Eq)
 
-data Type = N
-          | Z
-          | R
-          | Universe
-          | CustomType BindingName
+data Type = TN
+          | TZ
+          | TR
+          | TChar
+          | TUniverse
+          | TCustom BindingName
           deriving Show
 
 data Relationship = SubsetOf

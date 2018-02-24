@@ -236,16 +236,18 @@ type' :: Parser Type
 type' =   typeN'
       <|> typeZ'
       <|> typeR'
+      <|> typeChar'
       <|> typeUniverse'
       <|> typeCustom'
 
-typeN' = reserved "N" >> return N
-typeZ' = reserved "Z" >> return Z
-typeR' = reserved "R" >> return R
-typeUniverse' = reserved "Universe" >> return Universe
+typeN' = reserved "N" >> return TN
+typeZ' = reserved "Z" >> return TZ
+typeR' = reserved "R" >> return TR
+typeChar' = reserved "Char" >> return TChar
+typeUniverse' = reserved "Universe" >> return TUniverse
 typeCustom' = do
   bindName <- bindingName'
-  return $ CustomType bindName
+  return $ TCustom bindName
 
 parseWithEof :: Parser a -> String -> Either ParseError a
 parseWithEof p = parse (p <* eof) ""

@@ -29,6 +29,10 @@ unparseBind' :: BindingName -> String
 unparseBind' (BId(IId id)) = id
 
 unparseType' :: Type -> String
+unparseType' (TN) = "N"
+unparseType' (TZ) = "Z"
+unparseType' (TChar) = "Char"
+unparseType' (TUniverse) = "Universe"
 unparseType' t = show t
 
 unparseExpr' :: Expression -> String

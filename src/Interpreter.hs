@@ -71,11 +71,11 @@ checkTypes' (t:[], r:[]) c =
 checkTypes' (tys, rels) cs = Right "Blah"
 
 matchType' :: Type -> Relationship -> Constant -> Bool
-matchType' (Universe) _ _ = True
-matchType' (N) (ElementOf) (NatLit _) = True
-matchType' (Z) (ElementOf) (NatLit _) = True
-matchType' (Z) (ElementOf) (IntLit _) = True
-matchType' (R) (ElementOf) (FloatLit _) = True
+matchType' (TUniverse) _ _ = True
+matchType' (TN) (ElementOf) (NatLit _) = True
+matchType' (TZ) (ElementOf) (NatLit _) = True
+matchType' (TZ) (ElementOf) (IntLit _) = True
+matchType' (TR) (ElementOf) (FloatLit _) = True
 matchType' _ _ _= False
 
 applyExpr' :: [Expression] -> PatternStmt -> [Binding] -> Constant -> Constant

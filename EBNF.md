@@ -390,7 +390,7 @@ letter ::= 'a'
 
 ###### other\_symbol
 ```EBNF
-ther_symbol ::= '+'
+other_symbol ::= '+'
                | '-'
                | '*'
                | '/'
