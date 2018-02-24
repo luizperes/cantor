@@ -3,7 +3,7 @@ module Grammar where
 import System.Environment
 
 data Constant = Epsilon   [Char]
-              | StringLit [Char]
+              | CharLit   Char
               | FloatLit  Double
               | IntLit    Integer
               | NatLit    Integer

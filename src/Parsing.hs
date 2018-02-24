@@ -110,6 +110,7 @@ constant' = try
               floatLit'
           <|> naturalLit'
           <|> intLit'
+          <|> char'
           <|> tuple'
           <|> set'
 
@@ -133,6 +134,29 @@ naturalLit' = (natural >>= (\n -> return $ NatLit n))
 
 intLit' :: Parser Constant
 intLit' = (integer >>= (\i -> return $ IntLit i))
+
+charFromEscape :: Char -> Char
+charFromEscape '0' = '\0'
+charFromEscape 'b' = '\b'
+charFromEscape 'f' = '\f'
+charFromEscape 'n' = '\n'
+charFromEscape 'r' = '\r'
+charFromEscape 't' = '\t'
+charFromEscape 'v' = '\v'
+
+scapeChar' :: Parser Char
+scapeChar' = oneOf "\\\'0bfnrtv"
+
+validChar' :: Parser Char
+validChar' = try (char '\\' >> scapeChar' >>= (\c -> return $ c))
+           <|> (anyChar >>= (\c -> return $ c))
+
+char' :: Parser Constant
+char' = do
+  char '\''
+  c <- validChar'
+  char '\''
+  return $ CharLit c
 
 statement' :: Parser BeginStmt
 statement' =   letStmt'
