@@ -90,6 +90,7 @@ let_stmt ::= "let" binding+
 ###### binding
 ```EBNF
 binding ::= binding_name '=' pattern_stmt ':' expr (',' expr)*
+          | binding_name '=' expr
 ```
 <p align="left">
   <a href="">
