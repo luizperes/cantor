@@ -36,7 +36,8 @@ interpretFCall' (FCNested n fc) (LetStmt binds) =
     binds
     (filter
       (\bind -> case bind of
-        BBind x _ _ -> x == n)
+        BBind x _ _ -> x == n
+        BExpr x _ -> x == n)
       binds)
     (interpretFCall' fc (LetStmt binds))
 

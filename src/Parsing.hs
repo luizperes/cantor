@@ -70,7 +70,7 @@ parse' =  whiteSpace
 letStmt' :: Parser BeginStmt
 letStmt' = do
   reserved "let"
-  binds <- (many1 binding')
+  binds <- (many1 (try binding' <|> bindingExpr'))
   return $ LetStmt binds
 
 doStmt' :: Parser BeginStmt
@@ -171,6 +171,13 @@ binding' = do
   symbol ":"
   exprs <- commaSep expr'
   return $ BBind bindName pattern exprs
+
+bindingExpr' :: Parser Binding
+bindingExpr' = do
+  bindName <- bindingName'
+  symbol "="
+  expr <- expr'
+  return $ BExpr bindName expr
 
 bindingName' :: Parser BindingName
 bindingName' = do

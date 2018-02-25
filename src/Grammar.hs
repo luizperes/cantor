@@ -60,6 +60,7 @@ data BinaryOp = Add
               deriving Show
 
 data Binding = BBind BindingName PatternStmt [Expression]
+             | BExpr BindingName Expression
              deriving Show
 
 data FunctionCall = FCSingle Constant
