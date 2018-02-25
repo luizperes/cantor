@@ -1,6 +1,6 @@
 let pi = 3.1415
 let rangeTuple1To5 = (1..5)
 let rangeChars = {'a'..'z'}
-let isChar = s subset of rangeChars: s = s #literal bool has not been implemented
+let isChar = s in rangeChars: s = s #literal bool has not been implemented
 
-do isChar . {'h'}
+do isChar . '2'

@@ -85,8 +85,8 @@ functionCall' =   singleFunctionCall'
 
 singleFunctionCall' :: Parser FunctionCall
 singleFunctionCall' = do
-  set <- set'
-  return $ FCSingle set
+  c <- constant'
+  return $ FCSingle c
 
 bindingFunctionCall' :: Parser BindingName
 bindingFunctionCall' = do
@@ -154,9 +154,9 @@ validChar' = try (char '\\' >> scapeChar' >>= (\c -> return $ c))
 
 char' :: Parser Constant
 char' = do
-  char '\''
+  symbol "'"
   c <- validChar'
-  char '\''
+  symbol "'"
   return $ CharLit c
 
 statement' :: Parser BeginStmt
