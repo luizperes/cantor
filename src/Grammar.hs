@@ -34,6 +34,8 @@ data BindingType = BType BindingName Relationship Type
 
 data PatternStmt = ForAllStmt [BindingType]
                  | ThereExistsStmt [BindingType]
+                 | SimpleStmt BindingType
+                 | PatternListStmt [PatternStmt]
                  deriving Show
 
 data Expression = EBinOp BinaryOp Expression Expression

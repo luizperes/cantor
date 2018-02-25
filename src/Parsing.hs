@@ -167,7 +167,7 @@ binding' :: Parser Binding
 binding' = do
   bindName <- bindingName'
   symbol "="
-  pattern <- patternStmt'
+  pattern <- patternListStmt'
   symbol ":"
   exprs <- commaSep expr'
   return $ BBind bindName pattern exprs
@@ -201,20 +201,33 @@ term' =   try (liftM EFCall functionCallExpr')
       <|> liftM EConst constant'
       <|> parens expr'
 
+patternListStmt' :: Parser PatternStmt
+patternListStmt' = do
+  patterns <- commaSep patternStmt'
+  return $ PatternListStmt patterns
+
 patternStmt' :: Parser PatternStmt
 patternStmt' =   forAllStmt'
              <|> thereExistsStmt'
+             <|> simpleStmt'
+
+simpleStmt' :: Parser PatternStmt
+simpleStmt' = do
+  bindType <- bindingType'
+  return $ SimpleStmt bindType
 
 forAllStmt' :: Parser PatternStmt
 forAllStmt' = do
   ((reserved "for" >> reserved "all") <|> reservedOp "∀")
-  bindTypes <- (parens (commaSep bindingType') <|> (commaSep bindingType'))
+  bindTypes <-  (parens (commaSep bindingType')
+            <|> (bindingType' >>= (\b -> return $ [b])))
   return $ ForAllStmt bindTypes
 
 thereExistsStmt' :: Parser PatternStmt
 thereExistsStmt' = do
   ((reserved "there" >> reserved "exists") <|> reservedOp "∃")
-  bindTypes <- (parens (commaSep bindingType') <|> (commaSep bindingType'))
+  bindTypes <-  (parens (commaSep bindingType')
+            <|> (bindingType' >>= (\b -> return $ [b])))
   return $ ThereExistsStmt bindTypes
 
 bindingType' :: Parser BindingType

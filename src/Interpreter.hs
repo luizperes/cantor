@@ -53,13 +53,16 @@ applyFCall' (BBind bind pattern expr) binds c =
     Left True -> applyExpr' expr pattern binds c
     Right r -> Epsilon (r ++ " in " ++ (unparseBind' bind))
 
+-- TODO: fix flattenType, think in a better approach
 flattenType' :: PatternStmt -> [Type] -> [Relationship] -> ([Type], [Relationship])
+flattenType' (SimpleStmt (BType _ r t)) ty rel = (ty ++ [t], rel ++ [r])
 flattenType' (ForAllStmt []) ty rel = (ty, rel)
 flattenType' (ThereExistsStmt []) ty rel = (ty, rel)
 flattenType' (ForAllStmt ((BType _ r t):xs)) ty rel =
   flattenType' (ForAllStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
 flattenType' (ThereExistsStmt ((BType _ r t):xs)) ty rel =
   flattenType' (ThereExistsStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
+flattenType' _ ty rel = (ty, rel)
 
 checkTypes' :: ([Type], [Relationship]) -> Constant -> Either Bool [Char]
 checkTypes' ([], []) _ = Left True
