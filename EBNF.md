@@ -10,7 +10,6 @@
   - [simple_stmt](#simple_stmt)
   - [for_all_stmt](#for_all_stmt)
   - [there_exists_stmt](#there_exists_stmt)
-  - [function_call](#function_call)
   - [function_call_expr](#function_call_expr)
   - [binding](#binding)
   - [expr](#expr)
@@ -78,17 +77,6 @@ do_stmt ::= "do" function_call
   </a>
 </p>
 
-###### function\_call
-```EBNF
-function_call ::= constant
-                | binding_name ('.' | '∘') function_call
-```
-<p align="left">
-  <a href="">
-    <img alt="FunctionCall" src="./img/function_call.png" />
-  </a>
-</p>
-
 ###### let\_stmt
 ```EBNF
 let_stmt ::= "let" binding+
@@ -114,7 +102,6 @@ binding ::= binding_name '=' pattern_stmt ':' expr (',' expr)*
 pattern_stmt ::= for_all_stmt
                | there_exists_stmt
                | simple_stmt
-               | expr
                | pattern_stmt (',' pattern_stmt)+
 ```
 <p align="left">
@@ -276,8 +263,8 @@ relatioship ::= ("subset" "of" | '⊆')
 type ::= 'Z'
        | 'N'
        | 'R'
+       | "Char"
        | "Universe"
-       | set
        | binding_name
 ```
 <p align="left">

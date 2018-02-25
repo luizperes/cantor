@@ -30,6 +30,7 @@ languageDef =
                                      , "N"
                                      , "Z"
                                      , "R"
+                                     , "Char"
                                      , "Universe"
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
