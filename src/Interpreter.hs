@@ -4,11 +4,12 @@ import System.Environment
 import Grammar
 import Unparsing
 
-exec' :: Program -> [Constant]
-exec' (Prog stmts) =
-  interpret'
-    (filter isDoStmt stmts)
-    (flattenLetStmt (filter (\x -> not (isDoStmt x)) stmts) (LetStmt []))
+--exec' :: Program -> [Constant]
+exec' :: Program -> [Char]
+exec' (Prog stmts) = show stmts
+--  interpret'
+--    (filter isDoStmt stmts)
+--    (flattenLetStmt (filter (\x -> not (isDoStmt x)) stmts) (LetStmt []))
 
 flattenLetStmt :: [BeginStmt] -> BeginStmt -> BeginStmt
 flattenLetStmt [] (LetStmt []) = LetStmt []
