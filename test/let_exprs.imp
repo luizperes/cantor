@@ -3,4 +3,5 @@ let rangeTuple1To5 = (1..5)
 let rangeChars = {'a'..'z'}
 let isChar = s in rangeChars: s = s #literal bool has not been implemented
 
-do isChar . '2'
+do isChar . '\n'
+do isChar . 'c'

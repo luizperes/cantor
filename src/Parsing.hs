@@ -145,11 +145,15 @@ charFromEscape 'r' = '\r'
 charFromEscape 't' = '\t'
 charFromEscape 'v' = '\v'
 
-scapeChar' :: Parser Char
-scapeChar' = oneOf "\\\'0bfnrtv"
+escapeChar' :: Char -> Bool
+escapeChar' c =
+  case elem c "0bfnrtv" of
+    True -> True
+    _ -> False
 
 validChar' :: Parser Char
-validChar' = try (char '\\' >> scapeChar' >>= (\c -> return $ c))
+validChar' = try (char '\\' >> (satisfy escapeChar') >>=
+                  (\c -> return $ charFromEscape c))
            <|> (anyChar >>= (\c -> return $ c))
 
 char' :: Parser Constant
