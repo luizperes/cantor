@@ -5,20 +5,24 @@ import Grammar
 import Unparsing
 
 --exec' :: Program -> [Constant]
+--exec' (Prog stmts) = interpret' (sepBeginStmts stmts ([], []))
+
 exec' :: Program -> [Char]
-exec' (Prog stmts) = show stmts
---  interpret'
---    (filter isDoStmt stmts)
---    (flattenLetStmt (filter (\x -> not (isDoStmt x)) stmts) (LetStmt []))
+exec' (Prog stmts) =
+  case sepBeginStmts stmts([],[]) of
+    (dos, lets) -> (show lets) ++ "\n\n" ++ (show dos)
+
+sepBeginStmts :: [BeginStmt] -> ([BeginStmt], [BeginStmt]) -> ([BeginStmt], [BeginStmt])
+sepBeginStmts [] tp = tp
+sepBeginStmts (x:xs) (dos, lets) =
+  case x of
+    (DoStmt _) -> sepBeginStmts xs (dos ++ [x], lets)
+    _ -> sepBeginStmts xs (dos, lets ++ [x])
 
 flattenLetStmt :: [BeginStmt] -> BeginStmt -> BeginStmt
 flattenLetStmt [] (LetStmt []) = LetStmt []
 flattenLetStmt ((LetStmt x):[]) (LetStmt y) = LetStmt (y ++ x)
 flattenLetStmt ((LetStmt x):xs) (LetStmt y) = flattenLetStmt xs (LetStmt (y ++ x))
-
-isDoStmt :: BeginStmt -> Bool
-isDoStmt (DoStmt _) = True
-isDoStmt _ = False
 
 interpret' :: [BeginStmt] -> BeginStmt -> [Constant]
 interpret' doStmts letStmt =
