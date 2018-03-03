@@ -1,0 +1,8 @@
+#let fact = n in Z:[ 1 x,y ] [x+1 otherwise]
+
+let fact = n in Z:
+         [ 1 (n = 0) ]
+         [ 1 (n = 1) ]
+         [ (n * fact . (n - 1)) otherwise ]
+
+do fact . 5

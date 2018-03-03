@@ -38,6 +38,10 @@ data PatternStmt = ForAllStmt [BindingType]
                  | PatternListStmt [PatternStmt]
                  deriving Show
 
+data CaseExpression = CEList [Expression]
+                    | CECase [(Expression, [Expression])]
+                    deriving Show
+
 data Expression = EBinOp BinaryOp Expression Expression
                 | EConst Constant
                 | EFCall FunctionCall
@@ -59,7 +63,7 @@ data BinaryOp = Add
               | Range
               deriving Show
 
-data Binding = BBind BindingName PatternStmt [Expression]
+data Binding = BBind BindingName PatternStmt CaseExpression
              | BExpr BindingName Expression
              deriving Show
 

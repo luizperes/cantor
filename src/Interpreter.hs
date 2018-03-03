@@ -87,7 +87,7 @@ matchType' (TZ) (ElementOf) (IntLit _) = True
 matchType' (TR) (ElementOf) (FloatLit _) = True
 matchType' _ _ _= False
 
-applyExpr' :: [Expression] -> PatternStmt -> [Binding] -> Constant -> Constant
+applyExpr' :: CaseExpression -> PatternStmt -> [Binding] -> Constant -> Constant
 applyExpr' expr pattern binds c = c
 
 

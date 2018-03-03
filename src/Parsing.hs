@@ -27,6 +27,7 @@ languageDef =
                                      , "subset"
                                      , "of"
                                      , "in"
+                                     , "otherwise"
                                      , "N"
                                      , "Z"
                                      , "R"
@@ -167,14 +168,42 @@ statement' :: Parser BeginStmt
 statement' =   letStmt'
            <|> doStmt'
 
+listExpr' :: Parser [Expression]
+listExpr' = do
+  exprs <- commaSep expr'
+  return $ exprs
+
+otherwise' :: Parser [Expression]
+otherwise' = do
+  reserved "otherwise"
+  return $ []
+
+case' :: Parser (Expression, [Expression])
+case' = do
+  symbol "["
+  expr  <- expr'
+  exprs <- (otherwise' <|> listExpr')
+  symbol "]"
+  return $ (expr, exprs)
+
+multiCase' :: Parser CaseExpression
+multiCase' = do
+  exprs <- many1 case'
+  return $ CECase exprs
+
+listCase' :: Parser CaseExpression
+listCase' = do
+  exprs <- listExpr'
+  return $ CEList exprs
+
 binding' :: Parser Binding
 binding' = do
   bindName <- bindingName'
   symbol "="
   pattern <- patternListStmt'
   symbol ":"
-  exprs <- commaSep expr'
-  return $ BBind bindName pattern exprs
+  cases <- (multiCase' <|> listCase')
+  return $ BBind bindName pattern cases
 
 bindingExpr' :: Parser Binding
 bindingExpr' = do
