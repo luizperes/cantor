@@ -309,6 +309,7 @@ identifier ::= (letter | start_symbol) (letter | digit | start_symbol | other_sy
 ###### constant
 ```EBNF
 constant ::= number
+           | boolean
            | char
            | tuple
            | set

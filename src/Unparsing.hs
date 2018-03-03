@@ -16,6 +16,7 @@ unparseConst' (NatLit c) = show c
 unparseConst' (IntLit c) = show c
 unparseConst' (FloatLit c) = show c
 unparseConst' (CharLit c) = "'" ++ [c] ++ "'"
+unparseConst' (BoolLit c) = show c
 
 unparseList' :: [Expression] -> [String] -> String
 unparseList' [] strs = concat (intersperse ", " strs)
