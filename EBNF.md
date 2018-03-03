@@ -12,6 +12,7 @@
   - [there_exists_stmt](#there_exists_stmt)
   - [function_call_expr](#function_call_expr)
   - [binding](#binding)
+  - [case_expr](#case_expr)
   - [expr](#expr)
   - [relational_expr](#relational_expr)
   - [range_expr](#range_expr)
@@ -89,7 +90,7 @@ let_stmt ::= "let" binding+
 
 ###### binding
 ```EBNF
-binding ::= binding_name '=' pattern_stmt ':' expr (',' expr)*
+binding ::= binding_name '=' pattern_stmt ':' case_expr
           | binding_name '=' expr
 ```
 <p align="left">
@@ -118,6 +119,17 @@ simple_stmt ::= binding_type
 <p align="left">
   <a href="">
     <img alt="SimpleStmt" src="./img/simple_stmt.png" />
+  </a>
+</p>
+
+###### case\_expr
+```EBNF
+case_expr ::= expr ( ',' expr )*
+            | ( '[' expr ( expr ( ',' expr )* | 'otherwise' ) ']' )+
+```
+<p align="left">
+  <a href="">
+    <img alt="CaseExpr" src="./img/case_expr.png" />
   </a>
 </p>
 
