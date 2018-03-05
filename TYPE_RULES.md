@@ -1,6 +1,4 @@
 # Imperal type rules
-
-### Type check
   - [Epsilon](#Epsilon)
   - [Boolean](#Boolean)
   - [Natural](#Natural)
@@ -14,55 +12,66 @@
 ###### Epsilon
 ```Haskell
 # Internal Type
-Ɛ str: error str
+let Ɛ =
+  str ∈ Universe: error str
 ```
 
 ###### Boolean
 ```Haskell
 # Internal Type
-∀expr ∈ Universe:
-                [ True       expr ]
-                [ False otherwise ]
+let Bool =
+  ∀expr ∈ Universe:
+                  [ True       expr ]
+                  [ False otherwise ]
 ```
 
 ###### Natural
 ```Haskell
-∀x ∈ Universe:
-             [ x               (x ∈ N) ]
-             [ x       (x ∈ Z), x >= 0 ]
-             [ Ɛ "x ∉ N"     otherwise ]
+let N =
+  ∀x ∈ Universe:
+               [ x               (x ∈ N) ]
+               [ x       (x ∈ Z), x >= 0 ]
+               [ Ɛ "x ∉ N"     otherwise ]
 ```
 
 ###### Integer
 ```Haskell
-∀x ∈ Universe:
-             [ x           (x ∈ Z) ]
-             [ x           (x ∈ N) ]
-             [ Ɛ "x ∉ Z" otherwise ]
+let Z =
+  ∀x ∈ Universe:
+               [ x           (x ∈ Z) ]
+               [ x           (x ∈ N) ]
+               [ Ɛ "x ∉ Z" otherwise ]
 ```
 
 ###### Double
 ```Haskell
-∀x ∈ Universe:
-             [ x           (x ∈ R) ]
-             [ x           (x ∈ N) ]
-             [ x           (x ∈ Z) ]
-             [ Ɛ "x ∉ R" otherwise ]
+let R =
+  ∀x ∈ Universe:
+               [ x           (x ∈ R) ]
+               [ x           (x ∈ N) ]
+               [ x           (x ∈ Z) ]
+               [ Ɛ "x ∉ R" otherwise ]
 ```
 
 ###### Char
 ```Haskell
-∀x ∈ Universe:
-             [ x           (x ∈ Char) ]
-             [ Ɛ "x ∉ Char" otherwise ]
+let Char =
+  ∀x ∈ Universe:
+               [ x           (x ∈ Char) ]
+               [ Ɛ "x ∉ Char" otherwise ]
 ```
 
-####### Tuple
+###### Tuple
 ```Haskell
 
+```
+
+###### Set
+```Haskell
 ```
 
 ###### Universe
 ```Haskell
-∀x ∈ Universe: x
+let Universe =
+  ∀x ∈ Universe: x
 ```
