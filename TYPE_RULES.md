@@ -64,7 +64,9 @@ let Char =
 ###### Tuple
 ```Haskell
 let Tuple =
-# TODO: Need more thinking on tuples
+  ∀(ty, x) ∈ Universe:
+                     [ x                          (x ∈ ty) ]
+                     [ Ɛ "x ∉ ty, invalid Tuple" otherwise ]
 ```
 
 ###### Set
@@ -76,6 +78,7 @@ let Set =
                  [ x                (list ⊆ Z), (x ∈ Z) ]
                  [ x                (list ⊆ R), (x ∈ R) ]
                  [ x          (list ⊆ Char), (x ∈ Char) ]
+                 [ x     (list ⊆ Universe), (x ∈ Tuple) ]
                  [ x  (list ⊆ Universe), (x ∈ Universe) ]
                  [ Ɛ "x ∉ list"               otherwise ]
 ```
