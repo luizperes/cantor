@@ -176,7 +176,7 @@ listExpr' = do
 otherwise' :: Parser [Expression]
 otherwise' = do
   reserved "otherwise"
-  return $ []
+  return $ [EConst (BoolLit True)]
 
 case' :: Parser (Expression, [Expression])
 case' = do
