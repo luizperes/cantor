@@ -63,11 +63,21 @@ let Char =
 
 ###### Tuple
 ```Haskell
-
+let Tuple =
+# TODO: Need more thinking on tuples
 ```
 
 ###### Set
 ```Haskell
+let Set =
+ ∀x ∈ list,
+ ∀list ⊆ Universe:
+                 [ x                (list ⊆ N), (x ∈ N) ]
+                 [ x                (list ⊆ Z), (x ∈ Z) ]
+                 [ x                (list ⊆ R), (x ∈ R) ]
+                 [ x          (list ⊆ Char), (x ∈ Char) ]
+                 [ x  (list ⊆ Universe), (x ∈ Universe) ]
+                 [ Ɛ "x ∉ list"               otherwise ]
 ```
 
 ###### Universe
