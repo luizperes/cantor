@@ -8,6 +8,9 @@
 #### EBNF and Railroad Diagram
   - Impero's grammar can be found on the file [EBNF.md](EBNF.md)
 
+#### Type Rules
+  - Impero's type rules can be found on the file [TYPE_RULES.md](TYPE_RULES.md)
+
 #### Example
 ```Haskell
 let
