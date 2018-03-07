@@ -7,6 +7,7 @@
   - [Char](#Char)
   - [Tuple](#Tuple)
   - [Set](#Set)
+  - [Custom](#Custom)
   - [Universe](#Universe)
 
 ###### Epsilon
@@ -74,13 +75,24 @@ let Tuple =
 let Set =
  ∀x ∈ list,
  ∀list ⊆ Universe:
-                 [ x                (list ⊆ N), (x ∈ N) ]
-                 [ x                (list ⊆ Z), (x ∈ Z) ]
-                 [ x                (list ⊆ R), (x ∈ R) ]
-                 [ x          (list ⊆ Char), (x ∈ Char) ]
-                 [ x     (list ⊆ Universe), (x ∈ Tuple) ]
-                 [ x  (list ⊆ Universe), (x ∈ Universe) ]
-                 [ Ɛ "x ∉ list"               otherwise ]
+                 [ x                     (list ⊆ N), (x ∈ N) ]
+                 [ x                     (list ⊆ Z), (x ∈ Z) ]
+                 [ x                     (list ⊆ R), (x ∈ R) ]
+                 [ x               (list ⊆ Char), (x ∈ Char) ]
+                 [ x     (list ⊆ customSet), (x ∈ customSet) ]
+                 [ x          (list ⊆ Universe), (x ∈ Tuple) ]
+                 [ x       (list ⊆ Universe), (x ∈ Universe) ]
+                 [ Ɛ "x ∉ list"                    otherwise ]
+```
+
+###### Custom
+```Haskell
+let customSet = x ⊆ Universe: x
+
+let Custom =
+  ∀x ∈ Universe:
+               [ x           (x ∈ customSet) ]
+               [ Ɛ "x ∉ customSet" otherwise ]
 ```
 
 ###### Universe
