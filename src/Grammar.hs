@@ -5,7 +5,7 @@ import System.Environment
 data Constant = Epsilon   [Char]
               | BoolLit   Bool
               | CharLit   Char
-              | FloatLit  Double
+              | DoubleLit Double
               | IntLit    Integer
               | NatLit    Integer
               | SetLit    [Expression]
