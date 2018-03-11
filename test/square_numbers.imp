@@ -1,8 +1,7 @@
 let
-  numberSet = for all x subset of Z: x
-  square = for all x in numberSet: x ^ 2
-  allEven = for all n in numberSet: (x % 2) = 0
-  ifThereIsANumberGreaterThan10 = there exists n in numberSet: n > 10
+  square = s subset of Z: x ^ 2, for all x in s
+  allEven = s subset of Z: (x % 2) = 0, for all x in s
+  ifThereIsANumberGreaterThan10 = s subset of Z: x > 10, there exists x in s
 do
   square .
   allEven .

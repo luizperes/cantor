@@ -109,7 +109,7 @@ nestedFunctionCall' = do
 
 constant' :: Parser Constant
 constant' = try
-              floatLit'
+              doubleLit'
           <|> naturalLit'
           <|> intLit'
           <|> char'
@@ -126,10 +126,10 @@ tuple' = do
   list <- parens (commaSep expr')
   return $ TupleLit list
 
-floatLit' :: Parser Constant
-floatLit' = do
+doubleLit' :: Parser Constant
+doubleLit' = do
   f <- float
-  return $ FloatLit f
+  return $ DoubleLit f
 
 naturalLit' :: Parser Constant
 naturalLit' = (natural >>= (\n -> return $ NatLit n))
@@ -247,9 +247,7 @@ patternListStmt' = do
   return $ PatternListStmt patterns
 
 patternStmt' :: Parser PatternStmt
-patternStmt' =   forAllStmt'
-             <|> thereExistsStmt'
-             <|> simpleStmt'
+patternStmt' = simpleStmt'
 
 simpleStmt' :: Parser PatternStmt
 simpleStmt' = do

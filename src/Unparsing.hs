@@ -14,7 +14,7 @@ unparseConst' (TupleLit cs) = "(" ++ (unparseList' cs []) ++ ")"
 unparseConst' (Epsilon c) = c
 unparseConst' (NatLit c) = show c
 unparseConst' (IntLit c) = show c
-unparseConst' (FloatLit c) = show c
+unparseConst' (DoubleLit c) = show c
 unparseConst' (CharLit c) = "'" ++ [c] ++ "'"
 unparseConst' (BoolLit c) = show c
 

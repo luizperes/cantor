@@ -84,7 +84,7 @@ matchType' (TUniverse) _ _ = True
 matchType' (TN) (ElementOf) (NatLit _) = True
 matchType' (TZ) (ElementOf) (NatLit _) = True
 matchType' (TZ) (ElementOf) (IntLit _) = True
-matchType' (TR) (ElementOf) (FloatLit _) = True
+matchType' (TR) (ElementOf) (DoubleLit _) = True
 matchType' _ _ _= False
 
 applyExpr' :: CaseExpression -> PatternStmt -> [Binding] -> Constant -> Constant
