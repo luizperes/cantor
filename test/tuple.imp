@@ -1,0 +1,9 @@
+let Point = x in Z, y in Z: (x, y)
+
+let TyTuple = ty ∈ Type1, x ∈ Type2: (ty, x)
+
+let Bre = [ x         (x, y) := Point . (1, 2) ]
+          [ "Error"                  otherwise ]
+
+let IntTuple = [ (x, y)     x ∈ Z, y ∈ Z ]
+               [ {}            otherwise ]         
