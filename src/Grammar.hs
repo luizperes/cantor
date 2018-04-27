@@ -44,10 +44,14 @@ data CaseExpression = CEList [Expression]
                     deriving Show
 
 data Expression = EBinOp BinaryOp Expression Expression
+                | EUnOp UnaryOp Expression
                 | EConst Constant
                 | EFCall FunctionCall
                 | EBind BindingName
                 deriving Show
+
+data UnaryOp = Neg
+             deriving Show
 
 data BinaryOp = Add
               | Sub

@@ -220,7 +220,8 @@ bindingName' = do
 expr' :: Parser Expression
 expr' = buildExpressionParser operators' term'
 
-operators' = [ [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
+operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
+             , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
              , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
                 Infix  (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
                 Infix  (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
