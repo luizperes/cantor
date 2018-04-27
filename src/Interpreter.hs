@@ -19,11 +19,6 @@ sepBeginStmts (x:xs) (dos, lets) =
     (DoStmt _) -> sepBeginStmts xs (dos ++ [x], lets)
     _ -> sepBeginStmts xs (dos, lets ++ [x])
 
-flattenLetStmt :: [BeginStmt] -> BeginStmt -> BeginStmt
-flattenLetStmt [] (LetStmt []) = LetStmt []
-flattenLetStmt ((LetStmt x):[]) (LetStmt y) = LetStmt (y ++ x)
-flattenLetStmt ((LetStmt x):xs) (LetStmt y) = flattenLetStmt xs (LetStmt (y ++ x))
-
 interpret' :: [BeginStmt] -> BeginStmt -> [Constant]
 interpret' doStmts letStmt =
   (map
@@ -54,21 +49,10 @@ apply' _ _ ((BBind (BId(IId id)) _ _):_:[]) _ =
   Epsilon ("Binding `" ++ id ++ "' is duplicated")
 
 applyFCall' :: Binding -> [Binding] -> Constant -> Constant
-applyFCall' (BBind bind pattern expr) binds c =
-  case checkTypes' (flattenType' pattern [] []) c of
-    Left True -> applyExpr' expr pattern binds c
-    Right r -> Epsilon (r ++ " in " ++ (unparseBind' bind))
-
--- TODO: fix flattenType, think in a better approach
-flattenType' :: PatternStmt -> [Type] -> [Relationship] -> ([Type], [Relationship])
-flattenType' (SimpleStmt (BType _ r t)) ty rel = (ty ++ [t], rel ++ [r])
-flattenType' (ForAllStmt []) ty rel = (ty, rel)
-flattenType' (ThereExistsStmt []) ty rel = (ty, rel)
-flattenType' (ForAllStmt ((BType _ r t):xs)) ty rel =
-  flattenType' (ForAllStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
-flattenType' (ThereExistsStmt ((BType _ r t):xs)) ty rel =
-  flattenType' (ThereExistsStmt xs) (ty ++ (t:[])) (rel ++ (r:[]))
-flattenType' _ ty rel = (ty, rel)
+applyFCall' (BBind bind pattern expr) binds c = c
+--  case checkTypes' pattern c of
+--    Left True -> applyExpr' expr pattern binds c
+--    Right r -> Epsilon (r ++ " in " ++ (unparseBind' bind))
 
 checkTypes' :: ([Type], [Relationship]) -> Constant -> Either Bool [Char]
 checkTypes' ([], []) _ = Left True

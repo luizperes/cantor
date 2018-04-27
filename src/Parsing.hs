@@ -248,6 +248,7 @@ term' =   try (liftM EFCall functionCallExpr')
       <|> liftM EBind bindingName'
       <|> liftM EConst constant'
       <|> liftM EType type'
+      <|> quantExpr'
       <|> parens expr'
 
 patternListStmt' :: Parser PatternStmt
@@ -263,19 +264,28 @@ simpleStmt' = do
   bindType <- bindingType'
   return $ SimpleStmt bindType
 
-forAllStmt' :: Parser PatternStmt
-forAllStmt' = do
-  ((reserved "for" >> reserved "all") <|> reservedOp "∀")
-  bindTypes <-  (parens (commaSep bindingType')
-            <|> (bindingType' >>= (\b -> return $ [b])))
-  return $ ForAllStmt bindTypes
+quantExpr' :: Parser Expression
+quantExpr' = forAllExpr' <|> thereExistsExpr'
 
-thereExistsStmt' :: Parser PatternStmt
-thereExistsStmt' = do
+forAllExpr' :: Parser Expression
+forAllExpr' = do
+  ((reserved "for" >> reserved "all") <|> reservedOp "∀")
+  bindType <- bindingMultType'
+  return $ EQtOp ForAll bindType
+
+thereExistsExpr' :: Parser Expression
+thereExistsExpr' = do
   ((reserved "there" >> reserved "exists") <|> reservedOp "∃")
-  bindTypes <-  (parens (commaSep bindingType')
-            <|> (bindingType' >>= (\b -> return $ [b])))
-  return $ ThereExistsStmt bindTypes
+  bindType <- bindingMultType'
+  return $ EQtOp ThereExists bindType
+
+bindingMultType' :: Parser BindingType
+bindingMultType' = do
+  bindNames <-  (parens (commaSep bindingName')
+            <|> (bindingName' >>= (\b -> return $ [b])))
+  relation <- relationship'
+  ty <- type'
+  return $ BMultType bindNames relation ty
 
 bindingType' :: Parser BindingType
 bindingType' = do

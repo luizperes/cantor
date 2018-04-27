@@ -31,11 +31,10 @@ data Relationship = SubsetOf
                   deriving Show
 
 data BindingType = BType BindingName Relationship Type
+                 | BMultType [BindingName] Relationship Type
                  deriving Show
 
-data PatternStmt = ForAllStmt [BindingType]
-                 | ThereExistsStmt [BindingType]
-                 | SimpleStmt BindingType
+data PatternStmt = SimpleStmt BindingType
                  | PatternListStmt [PatternStmt]
                  deriving Show
 
@@ -49,7 +48,12 @@ data Expression = EBinOp BinaryOp Expression Expression
                 | EFCall FunctionCall
                 | EBind BindingName
                 | EType Type
+                | EQtOp Quantif BindingType
                 deriving Show
+
+data Quantif = ForAll
+             | ThereExists
+             deriving Show
 
 data UnaryOp = Neg
              deriving Show
