@@ -48,6 +48,7 @@ data Expression = EBinOp BinaryOp Expression Expression
                 | EConst Constant
                 | EFCall FunctionCall
                 | EBind BindingName
+                | EType Type
                 deriving Show
 
 data UnaryOp = Neg
@@ -66,6 +67,8 @@ data BinaryOp = Add
               | Lt
               | LtE
               | Range
+              | In
+              | Subset
               deriving Show
 
 data Binding = BBind BindingName PatternStmt CaseExpression

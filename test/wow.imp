@@ -1,2 +1,4 @@
-let true = 1 = 1
-let false = ~true
+let True = 1 = 1
+let False = ~True
+let Point = (x ∈ Z, y ∈ N)
+let Point2 = x in Z, y in Z: (x, y)

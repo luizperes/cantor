@@ -220,6 +220,11 @@ bindingName' = do
 expr' :: Parser Expression
 expr' = buildExpressionParser operators' term'
 
+inOp' = (reserved "in" <|> reservedOp "∈")
+
+subsetOp' =   ((reserved "subset" >> reserved "of")
+          <|> reservedOp "⊆")
+
 operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
              , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
              , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
@@ -234,12 +239,15 @@ operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
                 Infix  (reservedOp "<="  >> return (EBinOp LtE)) AssocNone]
              , [Infix  (reservedOp "="   >> return (EBinOp Eq )) AssocNone,
                 Infix  (reservedOp "~"   >> return (EBinOp NEq)) AssocNone]
-              ]
+             , [Infix  (inOp'            >> return (EBinOp In )) AssocNone,
+                Infix  (subsetOp'        >> return (EBinOp Subset)) AssocNone]
+             ]
 
 term' :: Parser Expression
 term' =   try (liftM EFCall functionCallExpr')
       <|> liftM EBind bindingName'
       <|> liftM EConst constant'
+      <|> liftM EType type'
       <|> parens expr'
 
 patternListStmt' :: Parser PatternStmt
@@ -280,10 +288,8 @@ relationship' :: Parser Relationship
 relationship' =   subsetOf'
               <|> elementOf'
 
-subsetOf' =  ((reserved "subset" >> reserved "of")
-          <|>  reservedOp "⊆")
-          >> return SubsetOf
-elementOf' = (reserved "in" <|> reservedOp "∈") >> return ElementOf
+subsetOf' = subsetOp' >> return SubsetOf
+elementOf' = inOp' >> return ElementOf
 
 type' :: Parser Type
 type' =   typeN'
