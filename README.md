@@ -14,34 +14,40 @@
 #### Example
 ```Haskell
 let
-  numberSet = s subset of Z
-  square = for all x in numberSet: x ^ 2
-  allEven = for all n in numberSet: (x % 2) = 0
-  ifThereIsANumberGreaterThan10 = there exists n in numberSet: n > 10
+  square = s subset of Z: x ^ 2, for all x in s
+  allEven = s subset of Z: (x % 2) = 0, for all x in s
+  ifThereIsANumberGreaterThan10 = s subset of Z: x > 10, there exists x in s
 do
   square .
   allEven .
-  ifTheresIsANumberGreaterThan10 .
+  ifThereIsANumberGreaterThan10 .
   {2, 4, 6, 8, 10, 12}
 ```
 
 The code above can also be written:
 ```Haskell
 let
-  numberSet = s ⊆ Z
-  square = ∀x ∈ numberSet: x ^ 2
-  allEven = ∀n ∈ numberSet: (x % 2) = 0
-  ifThereIsANumberGreaterThan10 = ∃n ∈ numberSet: n > 10
+  square = s ⊆ Z: x ^ 2, ∀x ∈ s
+  allEven = s ⊆ Z: (x % 2) = 0, for all x ∈ s
+  ifThereIsANumberGreaterThan10 = s ⊆ Z: x > 10, ∃x ∈ s
 do
-  square .
-  allEven .
-  ifTheresIsANumberGreaterThan10 .
+  square ∘
+  allEven ∘
+  ifThereIsANumberGreaterThan10 ∘
   {2, 4, 6, 8, 10, 12}
 ```
 
 ###### output
 ```
 {4, 16, 36, 64, 100, 144}
+```
+
+#### Factorial
+```Haskell
+let fact = x ∈ N:
+         [ 1                        x = 0 ]
+         [ 1                        x = 1 ]
+         [ x * fact ∘ (x - 1)   otherwise ]
 ```
 
 ### Help
