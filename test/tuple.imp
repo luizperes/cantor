@@ -1,9 +1,15 @@
 let Point = x in Z, y in Z: (x, y)
 
+let Point2 = (x ∈ Z, y ∈ Z)
+
 let TyTuple = ty ∈ Type1, x ∈ Type2: (ty, x)
 
-let Bre = [ x         (x, y) := Point . (1, 2) ]
-          [ "Error"                  otherwise ]
+let x = y ∈ Universe: 1
 
-let IntTuple = [ (x, y)     x ∈ Z, y ∈ Z ]
-               [ {}            otherwise ]         
+let Bre = p ∈ Universe:
+        [ x      (x, y) :- Point . (1, 2) ]
+        [ y                     otherwise ]
+
+let IntTuple = x ∈ Universe, y ∈ Universe:
+             [ (x, y)     x ∈ Z, y ∈ Z ]
+             [ {}            otherwise ]
