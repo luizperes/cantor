@@ -73,5 +73,3 @@ matchType' _ _ _= False
 
 applyExpr' :: CaseExpression -> PatternStmt -> [Binding] -> Constant -> Constant
 applyExpr' expr pattern binds c = c
-
-

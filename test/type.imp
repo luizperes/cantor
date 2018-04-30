@@ -1,0 +1,39 @@
+# Functions
+
+let map = f ∈ Universe → Universe, s ⊆ Universe: ∀x ∈ s, f∘x
+let square = x ∈ Z: x^2
+
+# Basic Definitions
+
+let True = 1 = 1
+let False = ~True
+
+# Function Example
+
+let isBool = expr ∈ Universe:
+           [ True       expr ]
+           [ False otherwise ]
+
+let isNatural = x ∈ Universe:
+              [ True               (x ∈ N) ]
+              [ True       (x ∈ Z), x >= 0 ]
+              [ False            otherwise ]
+
+# Set Operations
+
+let set1 = {1, 2, 3}
+let set2 = {2, 3, 4}
+let set3 = s ⊆ set1 ∪ set2: s
+let set4 = s ⊆ set1 \ set2: s
+let set5 = s ⊆ set1 × set2: s
+let set6 = s ⊆ set1 ⊖ set2: s
+let set7 = s ⊆ set1 → set2: s
+let set8 = s ⊆ set1 ∩ set2 union set3: s
+
+# Composition
+
+let Point = (x, y) ∈ Z × Z
+
+let addOneToPositionX = (x, y) ∈ Point: (x+1, y)
+
+do map ∘ (square, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})

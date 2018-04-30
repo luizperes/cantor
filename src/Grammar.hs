@@ -24,7 +24,17 @@ data Type = TN
           | TChar
           | TUniverse
           | TCustom BindingName
+          | TBinOp SetOp Type Type
+          | TGroup Type
           deriving Show
+
+data SetOp = Union
+           | Intersection
+           | CartProduct
+           | SymmetricDiff
+           | RelativeDiff
+           | Function
+           deriving Show
 
 data Relationship = SubsetOf
                   | ElementOf

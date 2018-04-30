@@ -28,6 +28,8 @@ languageDef =
                                      , "of"
                                      , "in"
                                      , "otherwise"
+                                     , "union"
+                                     , "intersection"
                                      , "N"
                                      , "Z"
                                      , "R"
@@ -39,7 +41,8 @@ languageDef =
                                      , "<", ">", ">=", "<="
                                      , "=", "~"
                                      , "∀", "∃", "∈", "⊆", "∘"
-                                     , ":-"
+                                     , ":-", "->", "\\"
+                                     , "∪", "∩", "×", "⊖", "→"
                                      ]
            , caseSensitive         = True
            }
@@ -304,12 +307,32 @@ subsetOf' = subsetOp' >> return SubsetOf
 elementOf' = inOp' >> return ElementOf
 
 type' :: Parser Type
-type' =   typeN'
-      <|> typeZ'
-      <|> typeR'
-      <|> typeChar'
-      <|> typeUniverse'
-      <|> typeCustom'
+type' = buildExpressionParser operatorsTy' typeExpr'
+
+operatorsTy' = [
+                  [Infix (unionOp'         >> return (TBinOp Union)) AssocLeft,
+                  Infix  (intersecOp'      >> return (TBinOp Intersection)) AssocLeft,
+                  Infix  (cartProdOp'      >> return (TBinOp CartProduct)) AssocNone,
+                  Infix  (symDiffOp'       >> return (TBinOp SymmetricDiff)) AssocLeft,
+                  Infix  (relDiffOp'       >> return (TBinOp RelativeDiff)) AssocLeft,
+                  Infix  (funOp'           >> return (TBinOp Function)) AssocNone]
+               ]
+
+unionOp' = (reserved "union" <|> reservedOp "∪")
+intersecOp' = (reserved "intersection" <|> reservedOp "∩")
+cartProdOp' = (reserved "*" <|> reservedOp "×")
+symDiffOp' = (reserved "-" <|> reservedOp "⊖")
+relDiffOp' = (reserved "\\")
+funOp' = (reserved "->" <|> reservedOp "→")
+
+typeExpr' :: Parser Type
+typeExpr' =   typeN'
+          <|> typeZ'
+          <|> typeR'
+          <|> typeChar'
+          <|> typeUniverse'
+          <|> typeCustom'
+          <|> typeGroup'
 
 typeN' = reserved "N" >> return TN
 typeZ' = reserved "Z" >> return TZ
@@ -319,6 +342,9 @@ typeUniverse' = reserved "Universe" >> return TUniverse
 typeCustom' = do
   bindName <- bindingName'
   return $ TCustom bindName
+typeGroup' = do
+  ty <- parens type'
+  return $ TGroup ty
 
 parseWithEof :: Parser a -> String -> Either ParseError a
 parseWithEof p = parse (p <* eof) ""
