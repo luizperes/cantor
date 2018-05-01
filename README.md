@@ -28,7 +28,7 @@ The code above can also be written:
 ```Haskell
 let
   square = s ⊆ Z: x ^ 2, ∀x ∈ s
-  allEven = s ⊆ Z: (x % 2) = 0, for all x ∈ s
+  allEven = s ⊆ Z: (x % 2) = 0, ∀x ∈ s
   ifThereIsANumberGreaterThan10 = s ⊆ Z: x > 10, ∃x ∈ s
 do
   square ∘
