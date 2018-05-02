@@ -40,7 +40,7 @@ data Relationship = SubsetOf
                   | ElementOf
                   deriving Show
 
-data BindingType = BType BindingName Relationship Type
+data BindingType = BType [BindingName] Relationship Type
                  | BMultType [BindingName] Relationship Type
                  deriving Show
 

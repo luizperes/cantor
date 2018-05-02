@@ -294,10 +294,11 @@ bindingMultType' = do
 
 bindingType' :: Parser BindingType
 bindingType' = do
-  bindName <- bindingName'
+  bindNames <-  (parens (commaSep bindingName')
+            <|> (bindingName' >>= (\b -> return $ [b])))
   relation <- relationship'
   ty <- type'
-  return $ BType bindName relation ty
+  return $ BType bindNames relation ty
 
 relationship' :: Parser Relationship
 relationship' =   subsetOf'
