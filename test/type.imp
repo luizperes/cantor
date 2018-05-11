@@ -36,4 +36,12 @@ let Point = (x, y) ∈ Z × Z
 
 let addOneToPositionX = (x, y) ∈ Point: (x+1, y)
 
+let anotherTry = x ∈ Point
+
+let yetAnotherTry = (x, y) ∈ Point
+
+let yetYetAnotherTry = (x, y, z) ∈ Point × G
+
+let yetYetAnotherTry = (x, y, z) ∈ Point × Z
+
 do map ∘ (square, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})

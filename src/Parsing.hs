@@ -250,9 +250,9 @@ operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
 
 term' :: Parser Expression
 term' =   try (liftM EFCall functionCallExpr')
+      <|> try (liftM EConst constant')
+      <|> try (liftM EType type')
       <|> liftM EBind bindingName'
-      <|> liftM EConst constant'
-      <|> liftM EType type'
       <|> quantExpr'
       <|> parens expr'
 
