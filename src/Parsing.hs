@@ -230,7 +230,7 @@ subsetOp' =   ((reserved "subset" >> reserved "of")
           <|> reservedOp "⊆")
 
 operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
-             , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocLeft]
+             , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocRight]
              , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
                 Infix  (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
                 Infix  (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
@@ -245,7 +245,7 @@ operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
                 Infix  (reservedOp "~"   >> return (EBinOp NEq)) AssocNone]
              , [Infix  (inOp'            >> return (EBinOp In )) AssocNone,
                 Infix  (subsetOp'        >> return (EBinOp Subset)) AssocNone]
-             , [Infix  (reservedOp ":-"  >> return (EBinOp Def)) AssocNone]
+             , [Infix  (reservedOp ":-"  >> return (EBinOp Def)) AssocRight]
              ]
 
 term' :: Parser Expression
