@@ -1,6 +1,6 @@
 # Functions
 
-let map = f ∈ Universe → Universe, s ⊆ Universe: ∀x ∈ s, f∘x
+let map = f ∈ Universe → Universe, s ⊆ Universe: ∀x ∈ s, (f∘x)
 let square = x ∈ Z: x^2
 
 # Basic Definitions

@@ -65,8 +65,8 @@ float      = Token.float      lexer -- parses a floating number
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 symbol     = Token.symbol     lexer -- parses symbols
 
-commaSep p = p `sepBy` (symbol ",")
-braces p   = between (symbol "{") (symbol "}") p
+commaSep p  = p `sepBy` (symbol ",")
+braces p    = between (symbol "{") (symbol "}") p
 
 parse' :: Parser [BeginStmt]
 parse' =  whiteSpace
@@ -101,8 +101,10 @@ bindingFunctionCall' = do
 
 functionCallExpr' :: Parser FunctionCall
 functionCallExpr' = do
+  symbol "("
   bindName <- bindingFunctionCall'
   expr <- expr'
+  symbol ")"
   return $ FCExpr bindName expr
 
 nestedFunctionCall' :: Parser FunctionCall
