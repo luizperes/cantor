@@ -99,14 +99,6 @@ bindingFunctionCall' = do
   (symbol "." <|> symbol "∘")
   return $ bindName
 
-functionCallExpr' :: Parser FunctionCall
-functionCallExpr' = do
-  symbol "("
-  bindName <- bindingFunctionCall'
-  expr <- expr'
-  symbol ")"
-  return $ FCExpr bindName expr
-
 nestedFunctionCall' :: Parser FunctionCall
 nestedFunctionCall' = do
   bindName <- bindingFunctionCall'
@@ -226,12 +218,15 @@ bindingName' = do
 expr' :: Parser Expression
 expr' = buildExpressionParser operators' term'
 
+funcCallExpr' = (reservedOp "." <|> reservedOp "∘")
+
 inOp' = (reserved "in" <|> reservedOp "∈")
 
 subsetOp' =   ((reserved "subset" >> reserved "of")
           <|> reservedOp "⊆")
 
 operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
+             , [Infix  (funcCallExpr'    >> return (EBinOp FCall)) AssocRight]
              , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocRight]
              , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
                 Infix  (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
@@ -251,8 +246,7 @@ operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
              ]
 
 term' :: Parser Expression
-term' =   try (liftM EFCall functionCallExpr')
-      <|> try (liftM EConst constant')
+term' =   try (liftM EConst constant')
       <|> try (liftM EType type')
       <|> liftM EBind bindingName'
       <|> quantExpr'
@@ -323,8 +317,8 @@ operatorsTy' = [
 
 unionOp' = (reserved "union" <|> reservedOp "∪")
 intersecOp' = (reserved "intersection" <|> reservedOp "∩")
-cartProdOp' = (reserved "*" <|> reservedOp "×")
-symDiffOp' = (reserved "-" <|> reservedOp "⊖")
+cartProdOp' = (reserved "*'" <|> reservedOp "×")
+symDiffOp' = (reserved "-'" <|> reservedOp "⊖")
 relDiffOp' = (reserved "\\")
 funOp' = (reserved "->" <|> reservedOp "→")
 

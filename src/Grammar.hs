@@ -55,7 +55,6 @@ data CaseExpression = CEList [Expression]
 data Expression = EBinOp BinaryOp Expression Expression
                 | EUnOp UnaryOp Expression
                 | EConst Constant
-                | EFCall FunctionCall
                 | EBind BindingName
                 | EType Type
                 | EQtOp Quantif BindingType
@@ -80,6 +79,7 @@ data BinaryOp = Add
               | GtE
               | Lt
               | LtE
+              | FCall
               | Range
               | In
               | Subset

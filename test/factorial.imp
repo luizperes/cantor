@@ -3,6 +3,6 @@
 let fact = n in Z:
          [ 1 (n = 0) ]
          [ 1 (n = 1) ]
-         [ n - (fact . (n - 1)) otherwise ]
+         [ n * fact . (n - 1) otherwise ]
 
 do fact . 5
