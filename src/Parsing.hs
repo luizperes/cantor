@@ -121,8 +121,15 @@ set' = do
 
 tuple' :: Parser Constant
 tuple' = do
-  list <- parens (commaSep expr')
+  list <- parens min1Expr'
   return $ TupleLit list
+
+min1Expr' :: Parser [Expression]
+min1Expr' = do
+  expr <- expr'
+  symbol ","
+  exprs <- commaSep expr'
+  return $ [expr] ++ exprs
 
 doubleLit' :: Parser Constant
 doubleLit' = do
