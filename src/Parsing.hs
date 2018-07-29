@@ -43,6 +43,7 @@ languageDef =
                                      , "∀", "∃", "∈", "⊆", "∘"
                                      , ":-", "->", "\\"
                                      , "∪", "∩", "×", "⊖", "→"
+                                     , "*'", "-'"
                                      ]
            , caseSensitive         = True
            }
@@ -318,10 +319,10 @@ operatorsTy' = [
 
 unionOp' = (reserved "union" <|> reservedOp "∪")
 intersecOp' = (reserved "intersection" <|> reservedOp "∩")
-cartProdOp' = (reserved "*'" <|> reservedOp "×")
-symDiffOp' = (reserved "-'" <|> reservedOp "⊖")
-relDiffOp' = (reserved "\\")
-funOp' = (reserved "->" <|> reservedOp "→")
+cartProdOp' = (reservedOp "*'" <|> reservedOp "×")
+symDiffOp' = (reservedOp "-'" <|> reservedOp "⊖")
+relDiffOp' = (reservedOp "\\")
+funOp' = (reservedOp "->" <|> reservedOp "→")
 
 typeExpr' :: Parser Type
 typeExpr' =   typeN'

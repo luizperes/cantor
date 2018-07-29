@@ -239,7 +239,7 @@ fn_call_expr ::= negation_expr
   </a>
 </p>
 
-###### negation\\_expr
+###### negation\_expr
 ```EBNF
 negation_expr ::= primary_expr
                 | ('~' negation_expr)

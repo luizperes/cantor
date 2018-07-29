@@ -1,4 +1,4 @@
 let j = a in Z:2
 let a = 2
-
-let j = (a, a) in Z -> Z: 2
+let wow = (a, b) in Z -> Z: 2
+let j = (a, a) in Z *' Z: 2 * 2
