@@ -24,7 +24,7 @@
   - [quant_expr](#quant_expr)
   - [relationship](#relationship)
   - [type](#type)
-    [binding_type](#binding_type)
+  - [binding_type](#binding_type)
   - [binding_name](#binding_name)
   - [identifier](#identifier)
   - [constant](#constant)
@@ -113,7 +113,7 @@ pattern_stmt ::= simple_stmt (',' pattern_stmt)*
 
 ###### simple\_stmt
 ```EBNF
-simple_stmt ::= binding_name relationship type
+simple_stmt ::= binding_type
 ```
 <p align="left">
   <a href="">
@@ -308,7 +308,7 @@ type ::= 'Z'
   </a>
 </p>
 
-###### type
+###### binding\_type
 ```EBNF
 binding_type ::= (binding_name | "(" binding_name ("," binding_name)* ")") relationship type
 ```
