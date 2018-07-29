@@ -8,21 +8,23 @@
   - [let_stmt](#let_stmt)
   - [pattern_stmt](#pattern_stmt)
   - [simple_stmt](#simple_stmt)
-  - [for_all_stmt](#for_all_stmt)
-  - [there_exists_stmt](#there_exists_stmt)
-  - [function_call_expr](#function_call_expr)
   - [binding](#binding)
   - [case_expr](#case_expr)
   - [expr](#expr)
+  - [set_expr](#set_expr)
+  - [equality_expr](#equality_expr)
   - [relational_expr](#relational_expr)
   - [range_expr](#range_expr)
   - [additive_expr](#additive_expr)
   - [multiplicative_expr](#multiplicative_expr)
   - [power_expr](#power_expr)
+  - [fn_call_expr](#fn_call_expr)
+  - [negation_expr](#negation_expr)
   - [primary_expr](#primary_expr)
-  - [binding_type](#binding_type)
+  - [quant_expr](#quant_expr)
   - [relationship](#relationship)
   - [type](#type)
+    [binding_type](#binding_type)
   - [binding_name](#binding_name)
   - [identifier](#identifier)
   - [constant](#constant)
@@ -70,7 +72,7 @@ use_stmt ::= "use" binding_name
 
 ###### do\_stmt
 ```EBNF
-do_stmt ::= "do" function_call
+do_stmt ::= 'do' ( binding_name ( '.' | '∘' ) )* constant
 ```
 <p align="left">
   <a href="">
@@ -101,10 +103,7 @@ binding ::= binding_name '=' pattern_stmt ':' case_expr
 
 ###### pattern\_stmt
 ```EBNF
-pattern_stmt ::= for_all_stmt
-               | there_exists_stmt
-               | simple_stmt
-               | pattern_stmt (',' pattern_stmt)+
+pattern_stmt ::= simple_stmt (',' pattern_stmt)*
 ```
 <p align="left">
   <a href="">
@@ -114,7 +113,7 @@ pattern_stmt ::= for_all_stmt
 
 ###### simple\_stmt
 ```EBNF
-simple_stmt ::= binding_type
+simple_stmt ::= binding_name relationship type
 ```
 <p align="left">
   <a href="">
@@ -135,13 +134,35 @@ case_expr ::= expr ( ',' expr )*
 
 ###### expr
 ```EBNF
-expr ::= relational_expr
-       | (expr '=' relational_expr)
-       | (expr '~' relational_expr)
+expr ::= set_expr
+       | (expr ':-' set_expr)
 ```
 <p align="left">
   <a href="">
     <img alt="Expr" src="./img/expr.png" />
+  </a>
+</p>
+
+###### set_expr
+```EBNF
+set_expr ::= equality_expr
+           | (set_expr relationship equality_expr)
+```
+<p align="left">
+  <a href="">
+    <img alt="SetExpr" src="./img/set_expr.png" />
+  </a>
+</p>
+
+###### equality_expr
+```EBNF
+equality_expr ::= relational_expr
+                | (equality_expr '=' relational_expr)
+                | (equality_expr '~' relational_expr)
+```
+<p align="left">
+  <a href="">
+    <img alt="EqualityExpr" src="./img/equality_expr.png" />
   </a>
 </p>
 
@@ -198,8 +219,8 @@ multiplicative_expr ::= power_expr
 
 ###### power\_expr
 ```EBNF
-power_expr ::= primary_expr
-             | (power_expr '^' primary_expr)
+power_expr ::= fn_call_expr
+             | (power_expr '^' fn_call_expr)
 ```
 <p align="left">
   <a href="">
@@ -207,21 +228,34 @@ power_expr ::= primary_expr
   </a>
 </p>
 
-###### function\_call\_expr
+###### fn\_call\_expr
 ```EBNF
-function_call_expr ::= binding_name ('.' | '∘') expr
+fn_call_expr ::= negation_expr
+               | (fn_call_expr ("." | "∘") negation_expr)
 ```
 <p align="left">
   <a href="">
-    <img alt="FunctionCallExpr" src="./img/function_call_expr.png" />
+    <img alt="FunctionCallExpr" src="./img/fn_call_expr.png" />
+  </a>
+</p>
+
+###### negation\\_expr
+```EBNF
+negation_expr ::= primary_expr
+                | ('~' negation_expr)
+```
+<p align="left">
+  <a href="">
+    <img alt="NegationExpr" src="./img/negation_expr.png" />
   </a>
 </p>
 
 ###### primary\_expr
 ```EBNF
-primary_expr ::= function_call_expr
+primary_expr ::= constant
+               | type
                | binding_name
-               | constant
+               | quant_expr
                | '(' expr ')'
 ```
 <p align="left">
@@ -230,33 +264,14 @@ primary_expr ::= function_call_expr
   </a>
 </p>
 
-###### for\_all\_stmt
+###### quant\_expr
 ```EBNF
-for_all_stmt ::= ("for" "all" | '∀') (binding_type | '(' binding_type (',' binding_type)+ ')')
+quant_expr ::= ("for" "all" | '∀') binding_type
+             | ("there" "exists" | '∃') binding_type
 ```
 <p align="left">
   <a href="">
-    <img alt="ForAllStmt" src="./img/for_all_stmt.png" />
-  </a>
-</p>
-
-###### there\_exists\_stmt
-```EBNF
-there_exists_stmt ::= ("there" "exists" | '∃') (binding_type | '(' binding_type (',' binding_type)+ ')')
-```
-<p align="left">
-  <a href="">
-    <img alt="ThereExistsStmt" src="./img/there_exists_stmt.png" />
-  </a>
-</p>
-
-###### binding\_type
-```EBNF
-binding_type ::= binding_name relationship type
-```
-<p align="left">
-  <a href="">
-    <img alt="BindingType" src="./img/binding_type.png" />
+    <img alt="QuantExpr" src="./img/quant_expr.png" />
   </a>
 </p>
 
@@ -279,10 +294,27 @@ type ::= 'Z'
        | "Char"
        | "Universe"
        | binding_name
+       | type ("union" | "∪") type
+       | type ("intersection" | "∩") type
+       | type ("*'" | "×") type
+       | type ("-'" | "⊖") type
+       | type ("\") type
+       | type ("->" | "→") type
+       | "(" type ")"
 ```
 <p align="left">
   <a href="">
     <img alt="Type" src="./img/type.png" />
+  </a>
+</p>
+
+###### type
+```EBNF
+binding_type ::= (binding_name | "(" binding_name ("," binding_name)* ")") relationship type
+```
+<p align="left">
+  <a href="">
+    <img alt="BindingType" src="./img/binding_type.png" />
   </a>
 </p>
 
@@ -309,7 +341,6 @@ identifier ::= (letter | start_symbol) (letter | digit | start_symbol | other_sy
 ###### constant
 ```EBNF
 constant ::= number
-           | boolean
            | char
            | tuple
            | set
@@ -322,7 +353,7 @@ constant ::= number
 
 ###### set
 ```EBNF
-set ::= '{' expr (',' expr)* '}'
+set ::= '{' ( expr ( ',' expr )* )? '}'
 ```
 <p align="left">
   <a href="">
@@ -332,7 +363,7 @@ set ::= '{' expr (',' expr)* '}'
 
 ###### tuple
 ```EBNF
-tuple ::= '(' expr (',' expr)* ')'
+tuple ::= '(' expr (',' expr)+ ')'
 ```
 <p align="left">
   <a href="">

@@ -65,7 +65,8 @@ float      = Token.float      lexer -- parses a floating number
 whiteSpace = Token.whiteSpace lexer -- parses whitespace
 symbol     = Token.symbol     lexer -- parses symbols
 
-commaSep p  = p `sepBy` (symbol ",")
+commaSep p  = p `sepBy`  (symbol ",")
+commaSep1 p = p `sepBy1` (symbol ",")
 braces p    = between (symbol "{") (symbol "}") p
 
 parse' :: Parser [BeginStmt]
@@ -175,8 +176,9 @@ statement' =   letStmt'
 
 listExpr' :: Parser [Expression]
 listExpr' = do
-  exprs <- commaSep expr'
-  return $ exprs
+  expr <- expr'
+  exprs <- option [] (symbol "," >> (commaSep expr'))
+  return $ [expr] ++ exprs
 
 otherwise' :: Parser [Expression]
 otherwise' = do
@@ -278,26 +280,18 @@ quantExpr' = forAllExpr' <|> thereExistsExpr'
 forAllExpr' :: Parser Expression
 forAllExpr' = do
   ((reserved "for" >> reserved "all") <|> reservedOp "∀")
-  bindType <- bindingMultType'
+  bindType <- bindingType'
   return $ EQtOp ForAll bindType
 
 thereExistsExpr' :: Parser Expression
 thereExistsExpr' = do
   ((reserved "there" >> reserved "exists") <|> reservedOp "∃")
-  bindType <- bindingMultType'
+  bindType <- bindingType'
   return $ EQtOp ThereExists bindType
-
-bindingMultType' :: Parser BindingType
-bindingMultType' = do
-  bindNames <-  (parens (commaSep bindingName')
-            <|> (bindingName' >>= (\b -> return $ [b])))
-  relation <- relationship'
-  ty <- type'
-  return $ BMultType bindNames relation ty
 
 bindingType' :: Parser BindingType
 bindingType' = do
-  bindNames <-  (parens (commaSep bindingName')
+  bindNames <-  (parens (commaSep1 bindingName')
             <|> (bindingName' >>= (\b -> return $ [b])))
   relation <- relationship'
   ty <- type'
