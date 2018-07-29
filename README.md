@@ -1,9 +1,13 @@
-# Impero 
+# Impero
 > Impero is inspired on set comprehensions and discrete math. Its name derives from the so-famous phrase "divide and conquer"
 > (from Latin dīvide et imperā, hence impero : to give orders, command / to rule, hold sway).
 
 #### Dependencies
   - `parsec`: Install with the command: `cabal install parsec`
+
+#### How to install and run
+  - `cabal install`
+  - `cabal run </path/to/file.imp>`
 
 #### EBNF and Railroad Diagram
   - Impero's grammar can be found on the file [EBNF.md](EBNF.md)
@@ -53,5 +57,5 @@ let fact = x ∈ N:
 ### Help
 Feel free to send your pull requests. :)
 
-### LICENSE
-This project extends [GNU GPL v. 3](http://www.gnu.org/licenses/gpl-3.0.en.html), so be aware of that, regarding copying, modifying and (re)destributing.
+### Diclaimer
+Use at your own risk.
