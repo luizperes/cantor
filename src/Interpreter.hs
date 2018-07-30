@@ -4,13 +4,8 @@ import System.Environment
 import Grammar
 import Unparsing
 
---exec' :: Program -> [Constant]
---exec' (Prog stmts) = interpret' (sepBeginStmts stmts ([], []))
-
 exec' :: Program -> [Char]
-exec' (Prog stmts) =
-  case sepBeginStmts stmts([],[]) of
-    (dos, lets) -> (show lets) ++ "\n\n" ++ (show dos)
+exec' (Prog stmts) = interpret' (sepBeginStmts stmts ([], []))
 
 sepBeginStmts :: [BeginStmt] -> ([BeginStmt], [BeginStmt]) -> ([BeginStmt], [BeginStmt])
 sepBeginStmts [] tp = tp
@@ -19,11 +14,10 @@ sepBeginStmts (x:xs) (dos, lets) =
     (DoStmt _) -> sepBeginStmts xs (dos ++ [x], lets)
     _ -> sepBeginStmts xs (dos, lets ++ [x])
 
-interpret' :: [BeginStmt] -> BeginStmt -> [Constant]
-interpret' doStmts letStmt =
-  (map
-    (\doStmt -> interpretDo' doStmt letStmt)
-    doStmts)
+interpret' :: ([BeginStmt], [BeginStmt]) -> [Constant]
+interpret' (doStmts, letStmts) =
+  
+  map (\doStmt -> interpretDo' do
 
 interpretDo' :: BeginStmt -> BeginStmt -> Constant
 interpretDo' (DoStmt fc) letStmt = interpretFCall' fc letStmt
