@@ -7,10 +7,14 @@ import Unparsing
 --exec' :: Program -> [Constant]
 --exec' (Prog stmts) = interpret' (sepBeginStmts stmts ([], []))
 
-exec' :: Program -> [Char]
+exec' :: Program -> [Constant]
 exec' (Prog stmts) =
   case sepBeginStmts stmts([],[]) of
-    (dos, lets) -> (show lets) ++ "\n\n" ++ (show dos)
+    (dos, lets) -> interpret' dos (flattenLets' lets (LetStmt []))
+
+flattenLets' :: [BeginStmt] -> BeginStmt -> BeginStmt
+flattenLets' [] (LetStmt acc) = LetStmt acc
+flattenLets' ((LetStmt x):xs) (LetStmt acc) = flattenLets' xs (LetStmt (acc ++ x))
 
 sepBeginStmts :: [BeginStmt] -> ([BeginStmt], [BeginStmt]) -> ([BeginStmt], [BeginStmt])
 sepBeginStmts [] tp = tp

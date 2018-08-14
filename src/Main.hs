@@ -8,5 +8,5 @@ main = do
   [fileName] <- getArgs
   srcText <- readFile fileName
   case parseFile srcText of
-    Left   err -> print err -- error
+    Left   err -> print err
     Right prog -> print (exec' prog) --(unparseConstList' (exec' prog) [])
