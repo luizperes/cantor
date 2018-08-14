@@ -4,9 +4,6 @@ import System.Environment
 import Grammar
 import Unparsing
 
---exec' :: Program -> [Constant]
---exec' (Prog stmts) = interpret' (sepBeginStmts stmts ([], []))
-
 exec' :: Program -> [Constant]
 exec' (Prog stmts) =
   case sepBeginStmts stmts([],[]) of
