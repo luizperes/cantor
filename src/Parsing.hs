@@ -223,7 +223,7 @@ bindingExpr' = do
 bindingName' :: Parser BindingName
 bindingName' = do
   id <- identifier
-  return $ BId (IId id)
+  return $ BId id
 
 expr' :: Parser Expression
 expr' = buildExpressionParser operators' term'

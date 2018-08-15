@@ -12,8 +12,7 @@ data Constant = Epsilon   [Char]
               | TupleLit  [Expression]
               deriving Show
 
-data Identifier = IId String
-                deriving (Show, Eq)
+type Identifier = String
 
 data BindingName = BId Identifier
                  deriving (Show, Eq)
@@ -41,7 +40,6 @@ data Relationship = SubsetOf
                   deriving Show
 
 data BindingType = BType [BindingName] Relationship Type
-                 | BMultType [BindingName] Relationship Type
                  deriving Show
 
 data PatternStmt = SimpleStmt BindingType

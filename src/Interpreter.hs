@@ -1,8 +1,18 @@
 module Interpreter where
 
 import System.Environment
+import qualified Data.Map.Strict as Map
 import Grammar
 import Unparsing
+
+--
+-- lookup in map is O(logn)
+--
+type Map = Map.Map
+type FunEnv = (Identifier, (BindingType, CaseExpression))
+type FunEnvMap = Map Identifier (BindingType, CaseExpression)
+type BindEnv = (Identifier, Expression)
+type BindEnvMap = Map Identifier Expression
 
 exec' :: Program -> [Constant]
 exec' (Prog stmts) =
@@ -43,10 +53,10 @@ interpretFCall' (FCNested n fc) (LetStmt binds) =
     (interpretFCall' fc (LetStmt binds))
 
 apply' :: BindingName -> [Binding] -> [Binding] -> Constant -> Constant
-apply' (BId(IId id)) _ [] _ =
+apply' (BId id) _ [] _ =
   Epsilon ("Binding `" ++ id ++ "' does not exist")
 apply' _ binds (f:[]) c = applyFCall' f binds c
-apply' _ _ ((BBind (BId(IId id)) _ _):_:[]) _ =
+apply' _ _ ((BBind (BId id) _ _):_:[]) _ =
   Epsilon ("Binding `" ++ id ++ "' is duplicated")
 
 applyFCall' :: Binding -> [Binding] -> Constant -> Constant
