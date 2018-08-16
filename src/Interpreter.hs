@@ -9,24 +9,17 @@ import Unparsing
 -- lookup in map is O(logn)
 --
 type Map = Map.Map
-type FunEnv = (Identifier, (BindingType, CaseExpression))
-type FunEnvMap = Map Identifier (BindingType, CaseExpression)
-type BindEnv = (Identifier, Expression)
-type BindEnvMap = Map Identifier Expression
+type FunEnv = (Identifier, ([BindingType], CaseExpression))
+type FunEnvMap = Map Identifier ([BindingType], CaseExpression)
+type BindEnv = (Identifier, Constant)
+type BindEnvMap = Map Identifier Constant
 
 exec' :: Program -> [Constant]
 exec' (Prog stmts) =
   case sepBeginStmts stmts([],[]) of
-    (dos, lets) -> interpret' dos (flattenLets' lets (LetStmt []))
-
---setupEnvs :: [Definition] -> ([FunEnv], [VarEnv]) -> (FunEnvMap, VarEnvMap)
---setupEnvs [] (fnEnv, varEnv) = (Map.fromList fnEnv, Map.fromList varEnv)
---setupEnvs (x:xs) (fnEnv, varEnv) =
---  case x of
---    ConstantDef _ id expr ->
---      setupEnvs xs (fnEnv, varEnv ++ [(id, eval expr (Map.fromList fnEnv) (Map.fromList varEnv))])
---    FunctionDef _ id params expr ->
---      setupEnvs xs (fnEnv ++ [(id, (params, expr))], varEnv)
+    (dos, lets) ->
+      case (flattenLets' lets (LetStmt [])) of
+        LetStmt bindings -> interpret' dos (setupEnvs' bindings ([], []))
 
 flattenLets' :: [BeginStmt] -> BeginStmt -> BeginStmt
 flattenLets' [] (LetStmt acc) = LetStmt acc
@@ -39,27 +32,41 @@ sepBeginStmts (x:xs) (dos, lets) =
     (DoStmt _) -> sepBeginStmts xs (dos ++ [x], lets)
     _ -> sepBeginStmts xs (dos, lets ++ [x])
 
-interpret' :: [BeginStmt] -> BeginStmt -> [Constant]
-interpret' doStmts letStmt =
+setupEnvs' :: [Binding] -> ([FunEnv], [BindEnv]) -> (FunEnvMap, BindEnvMap)
+setupEnvs' [] (fnEnv, varEnv) = (Map.fromList fnEnv, Map.fromList varEnv)
+setupEnvs' (x:xs) (fnEnv, varEnv) =
+  case x of
+    BExpr bname expr ->
+      setupEnvs' xs (fnEnv, varEnv ++ [(bname, eval' expr (Map.fromList fnEnv) (Map.fromList varEnv))])
+    BBind bname params expr ->
+      case extractBTypes' params of
+        btys -> setupEnvs' xs (fnEnv ++ [(bname, (btys, expr))], varEnv)
+
+extractBTypes' :: PatternStmt -> [BindingType]
+extractBTypes' (SimpleStmt bty) = [bty]
+extractBTypes' (PatternListStmt []) = []
+extractBTypes' (PatternListStmt (x:xs)) =
+  (extractBTypes' x) ++ (extractBTypes' (PatternListStmt xs))
+
+interpret' :: [BeginStmt] -> (FunEnvMap, BindEnvMap) -> [Constant]
+interpret' doStmts (fEnv, bEnv) =
   (map
-    (\doStmt -> interpretDo' doStmt letStmt)
+    (\doStmt -> interpretDo' doStmt (fEnv, bEnv))
     doStmts)
 
-interpretDo' :: BeginStmt -> BeginStmt -> Constant
-interpretDo' (DoStmt fc) letStmt = interpretFCall' fc letStmt
+eval' :: Expression -> FunEnvMap -> BindEnvMap -> Constant
+eval' expr fEnv bEnv = BoolLit False 
 
-interpretFCall' :: FunctionCall -> BeginStmt -> Constant
+interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
+interpretDo' (DoStmt fc) (fEnv, bEnv) = interpretFCall' fc (fEnv, bEnv)
+
+interpretFCall' :: FunctionCall -> (FunEnvMap, BindEnvMap) -> Constant
 interpretFCall' (FCSingle x) _ = x
-interpretFCall' (FCNested n fc) (LetStmt binds) =
-  apply'
-    n
-    binds
-    (filter
-      (\bind -> case bind of
-        BBind x _ _ -> x == n
-        BExpr x _ -> x == n)
-      binds)
-    (interpretFCall' fc (LetStmt binds))
+interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
+  eval'
+    (EBinOp FCall (EBind bname) (EConst (interpretFCall' fc (fEnv, bEnv))))
+    fEnv
+    bEnv
 
 apply' :: BindingName -> [Binding] -> [Binding] -> Constant -> Constant
 apply' id _ [] _ =
