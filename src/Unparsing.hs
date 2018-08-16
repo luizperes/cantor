@@ -27,7 +27,7 @@ unparseRel' (SubsetOf) = "subset of"
 unparseRel' (ElementOf) = "in"
 
 unparseBind' :: BindingName -> String
-unparseBind' (BId id) = id
+unparseBind' id = id
 
 unparseType' :: Type -> String
 unparseType' (TN) = "N"

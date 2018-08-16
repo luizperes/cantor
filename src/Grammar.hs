@@ -14,8 +14,7 @@ data Constant = Epsilon   [Char]
 
 type Identifier = String
 
-data BindingName = BId Identifier
-                 deriving (Show, Eq)
+type BindingName = Identifier
 
 data Type = TN
           | TZ

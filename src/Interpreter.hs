@@ -19,6 +19,15 @@ exec' (Prog stmts) =
   case sepBeginStmts stmts([],[]) of
     (dos, lets) -> interpret' dos (flattenLets' lets (LetStmt []))
 
+--setupEnvs :: [Definition] -> ([FunEnv], [VarEnv]) -> (FunEnvMap, VarEnvMap)
+--setupEnvs [] (fnEnv, varEnv) = (Map.fromList fnEnv, Map.fromList varEnv)
+--setupEnvs (x:xs) (fnEnv, varEnv) =
+--  case x of
+--    ConstantDef _ id expr ->
+--      setupEnvs xs (fnEnv, varEnv ++ [(id, eval expr (Map.fromList fnEnv) (Map.fromList varEnv))])
+--    FunctionDef _ id params expr ->
+--      setupEnvs xs (fnEnv ++ [(id, (params, expr))], varEnv)
+
 flattenLets' :: [BeginStmt] -> BeginStmt -> BeginStmt
 flattenLets' [] (LetStmt acc) = LetStmt acc
 flattenLets' ((LetStmt x):xs) (LetStmt acc) = flattenLets' xs (LetStmt (acc ++ x))
@@ -53,10 +62,10 @@ interpretFCall' (FCNested n fc) (LetStmt binds) =
     (interpretFCall' fc (LetStmt binds))
 
 apply' :: BindingName -> [Binding] -> [Binding] -> Constant -> Constant
-apply' (BId id) _ [] _ =
+apply' id _ [] _ =
   Epsilon ("Binding `" ++ id ++ "' does not exist")
 apply' _ binds (f:[]) c = applyFCall' f binds c
-apply' _ _ ((BBind (BId id) _ _):_:[]) _ =
+apply' _ _ ((BBind id _ _):_:[]) _ =
   Epsilon ("Binding `" ++ id ++ "' is duplicated")
 
 applyFCall' :: Binding -> [Binding] -> Constant -> Constant
