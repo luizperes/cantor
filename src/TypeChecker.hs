@@ -2,6 +2,21 @@ module TypeChecker where
   
 import Grammar
 
+isImpBoolType' :: BinaryOp -> Bool
+isImpBoolType' Eq  = True
+isImpBoolType' NEq = True
+isImpBoolType' Gt  = True
+isImpBoolType' GtE = True
+isImpBoolType' Lt  = True
+isImpBoolType' LtE = True
+isImpBoolType' _   = False
+
+impNumber' :: Constant -> Maybe Double
+impNumber' (NatLit c) = Just (fromIntegral c)
+impNumber' (IntLit c) = Just (fromIntegral c)
+impNumber' (DoubleLit c) = Just c
+impNumber' _ = Nothing
+
 {-
  - Type rules are as described on TYPE_RULES.md file
  -}

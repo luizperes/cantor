@@ -4,6 +4,7 @@ import System.Environment
 import qualified Data.Map.Strict as Map
 import Grammar
 import Unparsing
+import TypeChecker
 
 --
 -- lookup in map is O(logn)
@@ -59,11 +60,25 @@ eval' (EBind v) _ bEnv =
   case Map.lookup v bEnv of
     Just value -> value
     _ -> Epsilon (v ++ " is not a valid binding name")
+eval' (EUnOp Neg expr) fEnv bEnv =
+  case eval' expr fEnv bEnv of
+    BoolLit b -> BoolLit (not b)
+    _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
   case expr of
     SetLit [] -> eval' (EBind bname) fEnv bEnv
     _ -> Epsilon ("Unimplemented for fn " ++ bname)
-eval' (EType ty) _ _ = (TypeLit ty)
+eval' (EBinOp op expr1 expr2) fEnv bEnv
+  | isImpBoolType' op =
+    case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
+      Just b -> b
+      _ -> Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
+        (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
+  | otherwise = Epsilon ("Unimplemented for op " ++ (show op))
+eval' (EType ty) fEnv bEnv =
+  case ty of
+    TCustom bname -> eval' (EBind bname) fEnv bEnv
+    _ -> (TypeLit ty)
 eval' (EConst const) _ _ = const
 eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 
@@ -78,6 +93,24 @@ interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
     fEnv
     bEnv
 
+applyBinOp' :: BinaryOp -> Constant -> Constant -> Maybe Constant
+applyBinOp' op (BoolLit b1) (BoolLit b2) =
+  case op of
+    Eq  -> Just (BoolLit (b1 == b2))
+    NEq -> Just (BoolLit (b1 /= b2))
+applyBinOp' op c1 c2 =
+  case (impNumber' c1, impNumber' c2) of
+    (Just b1, Just b2) ->
+      case op of
+        Eq  -> Just (BoolLit (b1 == b2))
+        NEq -> Just (BoolLit (b1 /= b2))
+        Gt  -> Just (BoolLit (b1 >  b2))
+        GtE -> Just (BoolLit (b1 >= b2))
+        Lt  -> Just (BoolLit (b1 <  b2))
+        LtE -> Just (BoolLit (b1 <= b2))
+        _ -> Nothing
+    _ -> Nothing
+
 apply' :: BindingName -> [Binding] -> [Binding] -> Constant -> Constant
 apply' id _ [] _ =
   Epsilon ("Binding `" ++ id ++ "' does not exist")
@@ -91,22 +124,3 @@ applyFCall' (BBind bind pattern expr) binds c = c
 --    Left True -> applyExpr' expr pattern binds c
 --    Right r -> Epsilon (r ++ " in " ++ (unparseBind' bind))
 
-checkTypes' :: ([Type], [Relationship]) -> Constant -> Either Bool [Char]
-checkTypes' ([], []) _ = Left True
-checkTypes' (t:[], r:[]) c =
-  case matchType' t r c of
-    True -> Left True
-    _ -> Right ("`" ++ (unparseConst' c) ++ "' is not `" ++
-         (unparseRel' r) ++ " " ++ (unparseType' t) ++ "'")
-checkTypes' (tys, rels) cs = Right "Blah"
-
-matchType' :: Type -> Relationship -> Constant -> Bool
-matchType' (TUniverse) _ _ = True
-matchType' (TN) (ElementOf) (NatLit _) = True
-matchType' (TZ) (ElementOf) (NatLit _) = True
-matchType' (TZ) (ElementOf) (IntLit _) = True
-matchType' (TR) (ElementOf) (DoubleLit _) = True
-matchType' _ _ _= False
-
-applyExpr' :: CaseExpression -> PatternStmt -> [Binding] -> Constant -> Constant
-applyExpr' expr pattern binds c = c

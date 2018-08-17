@@ -1,0 +1,7 @@
+let True = 1 = 1
+
+let False = ~True 
+
+do False . {}
+
+do True . {}
