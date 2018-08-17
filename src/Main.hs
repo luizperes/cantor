@@ -9,4 +9,4 @@ main = do
   srcText <- readFile fileName
   case parseFile srcText of
     Left   err -> print err
-    Right prog -> print (exec' prog) --(unparseConstList' (exec' prog) [])
+    Right prog -> putStrLn $ id (unparseConstList' (exec' prog) [])

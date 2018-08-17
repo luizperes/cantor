@@ -55,6 +55,7 @@ interpret' doStmts (fEnv, bEnv) =
     doStmts)
 
 eval' :: Expression -> FunEnvMap -> BindEnvMap -> Constant
+eval' (EConst const) _ _ = const
 eval' expr fEnv bEnv = BoolLit False 
 
 interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
