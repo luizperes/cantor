@@ -1,0 +1,3 @@
+let Natural = N
+
+do Natural . {}

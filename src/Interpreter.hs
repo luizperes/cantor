@@ -59,8 +59,13 @@ eval' (EBind v) _ bEnv =
   case Map.lookup v bEnv of
     Just value -> value
     _ -> Epsilon (v ++ " is not a valid binding name")
+eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
+  case expr of
+    SetLit [] -> eval' (EBind bname) fEnv bEnv
+    _ -> Epsilon ("Unimplemented for fn " ++ bname)
+eval' (EType ty) _ _ = (TypeLit ty)
 eval' (EConst const) _ _ = const
-eval' expr fEnv bEnv = BoolLit False 
+eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 
 interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
 interpretDo' (DoStmt fc) (fEnv, bEnv) = interpretFCall' fc (fEnv, bEnv)
