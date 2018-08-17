@@ -33,14 +33,14 @@ sepBeginStmts (x:xs) (dos, lets) =
     _ -> sepBeginStmts xs (dos, lets ++ [x])
 
 setupEnvs' :: [Binding] -> ([FunEnv], [BindEnv]) -> (FunEnvMap, BindEnvMap)
-setupEnvs' [] (fnEnv, varEnv) = (Map.fromList fnEnv, Map.fromList varEnv)
-setupEnvs' (x:xs) (fnEnv, varEnv) =
+setupEnvs' [] (fEnv, bEnv) = (Map.fromList fEnv, Map.fromList bEnv)
+setupEnvs' (x:xs) (fEnv, bEnv) =
   case x of
     BExpr bname expr ->
-      setupEnvs' xs (fnEnv, varEnv ++ [(bname, eval' expr (Map.fromList fnEnv) (Map.fromList varEnv))])
+      setupEnvs' xs (fEnv, bEnv ++ [(bname, eval' expr (Map.fromList fEnv) (Map.fromList bEnv))])
     BBind bname params expr ->
       case extractBTypes' params of
-        btys -> setupEnvs' xs (fnEnv ++ [(bname, (btys, expr))], varEnv)
+        btys -> setupEnvs' xs (fEnv ++ [(bname, (btys, expr))], bEnv)
 
 extractBTypes' :: PatternStmt -> [BindingType]
 extractBTypes' (SimpleStmt bty) = [bty]
@@ -55,6 +55,10 @@ interpret' doStmts (fEnv, bEnv) =
     doStmts)
 
 eval' :: Expression -> FunEnvMap -> BindEnvMap -> Constant
+eval' (EBind v) _ bEnv =
+  case Map.lookup v bEnv of
+    Just value -> value
+    _ -> Epsilon (v ++ " is not a valid binding name")
 eval' (EConst const) _ _ = const
 eval' expr fEnv bEnv = BoolLit False 
 
