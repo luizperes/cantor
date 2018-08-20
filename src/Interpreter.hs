@@ -67,6 +67,16 @@ eval' (EUnOp Neg expr) fEnv bEnv =
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
   case expr of
     SetLit [] -> eval' (EBind bname) fEnv bEnv
+    SetLit list ->
+      case (eval' (EConst expr) fEnv bEnv) of
+        set -> case (apply' bname set fEnv bEnv) of
+          Just c -> c
+          _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
+    TupleLit list ->
+      case (eval' (EConst expr) fEnv bEnv) of
+        tuple -> case (apply' bname tuple fEnv bEnv) of
+          Just c -> c
+          _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
     _ -> Epsilon ("Unimplemented for fn " ++ bname)
 eval' (EBinOp op expr1 expr2) fEnv bEnv
   | isImpBoolType' op =
@@ -74,11 +84,14 @@ eval' (EBinOp op expr1 expr2) fEnv bEnv
       Just b -> b
       _ -> Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
         (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
-  | otherwise = Epsilon ("Unimplemented for op " ++ (show op))
+  | otherwise = Epsilon ("Unimplemented for op " ++ (show op) ++
+    " " ++ (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
 eval' (EType ty) fEnv bEnv =
   case ty of
     TCustom bname -> eval' (EBind bname) fEnv bEnv
     _ -> (TypeLit ty)
+eval' (EConst (SetLit list)) fEnv bEnv = SetLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
+eval' (EConst (TupleLit list)) fEnv bEnv = TupleLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
 eval' (EConst const) _ _ = const
 eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 
@@ -111,12 +124,9 @@ applyBinOp' op c1 c2 =
         _ -> Nothing
     _ -> Nothing
 
-apply' :: BindingName -> [Binding] -> [Binding] -> Constant -> Constant
-apply' id _ [] _ =
-  Epsilon ("Binding `" ++ id ++ "' does not exist")
-apply' _ binds (f:[]) c = applyFCall' f binds c
-apply' _ _ ((BBind id _ _):_:[]) _ =
-  Epsilon ("Binding `" ++ id ++ "' is duplicated")
+-- TODO: implement apply function properly
+apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
+apply' bname input fEnv bEnv = Just input
 
 applyFCall' :: Binding -> [Binding] -> Constant -> Constant
 applyFCall' (BBind bind pattern expr) binds c = c
