@@ -178,7 +178,7 @@ statement' =   letStmt'
 listExpr' :: Parser [Expression]
 listExpr' = do
   expr <- expr'
-  exprs <- option [] (symbol "," >> (commaSep expr'))
+  exprs <- option [] (symbol "," >> (commaSep (expr' <|> quantExpr')))
   return $ [expr] ++ exprs
 
 otherwise' :: Parser [Expression]
@@ -259,7 +259,6 @@ term' :: Parser Expression
 term' =   try (liftM EConst constant')
       <|> try (liftM EType type')
       <|> liftM EBind bindingName'
-      <|> quantExpr'
       <|> parens expr'
 
 patternListStmt' :: Parser PatternStmt
