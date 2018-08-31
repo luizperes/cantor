@@ -1,3 +1,4 @@
 let j = 1
 
 do 5
+do j . {}

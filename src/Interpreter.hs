@@ -67,17 +67,10 @@ eval' (EUnOp Neg expr) fEnv bEnv =
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
   case expr of
     SetLit [] -> eval' (EBind bname) fEnv bEnv
-    SetLit list ->
-      case (eval' (EConst expr) fEnv bEnv) of
-        set -> case (apply' bname set fEnv bEnv) of
-          Just c -> c
-          _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
-    TupleLit list ->
-      case (eval' (EConst expr) fEnv bEnv) of
-        tuple -> case (apply' bname tuple fEnv bEnv) of
-          Just c -> c
-          _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
-    _ -> Epsilon ("Unimplemented for fn " ++ bname)
+    _ -> case (eval' (EConst expr) fEnv bEnv) of
+      evalExpr -> case (apply' bname evalExpr fEnv bEnv) of
+        Just c -> c
+        _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
 eval' (EBinOp op expr1 expr2) fEnv bEnv
   | isImpBoolType' op =
     case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
