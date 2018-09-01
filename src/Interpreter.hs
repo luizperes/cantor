@@ -85,6 +85,15 @@ eval' (EConst (TupleLit list)) fEnv bEnv = TupleLit (map (\x -> EConst(eval' x f
 eval' (EConst const) _ _ = const
 eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 
+-- TODO: finish CECase and CEList
+evalCaseExpr' :: CaseExpression -> FunEnvMap -> BindEnvMap -> Constant
+evalCaseExpr' (CEList [expr]) fEnv bEnv = eval' expr fEnv bEnv
+evalCaseExpr' expr _ _ = Epsilon ("Unimplemented " ++ (unparseCaseExpr' expr))
+-- return the first if all predicates
+-- evalCaseExpr' (CEList exprs) fEnv bEnv =
+--   map (\e -> eval' e fEnv bEnv) exprs
+-- evalCaseExpr' (CECase cases) fEnv bEnv = ...
+
 interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
 interpretDo' (DoStmt fc) (fEnv, bEnv) = interpretFCall' fc (fEnv, bEnv)
 
@@ -128,13 +137,24 @@ applyBinOp' op c1 c2 =
         _ -> Nothing
     _ -> Nothing
 
--- TODO: implement apply function properly
 apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
-apply' bname input fEnv bEnv = Just input
+apply' bname input fEnv bEnv =
+  case (Map.lookup bname fEnv) of
+    Just (btys, expr) ->
+      case (joinTysAndBinds' btys fEnv bEnv input []) of
+        Just paramsEnv ->
+          Just (evalCaseExpr'
+            expr
+            fEnv
+            (Map.union (Map.fromList paramsEnv) bEnv))
+        _ -> Nothing
+    _ -> Nothing
 
-applyFCall' :: Binding -> [Binding] -> Constant -> Constant
-applyFCall' (BBind bind pattern expr) binds c = c
---  case checkTypes' pattern c of
---    Left True -> applyExpr' expr pattern binds c
---    Right r -> Epsilon (r ++ " in " ++ (unparseBind' bind))
-
+-- TODO: check types
+-- TODO: implement tuples and sets
+joinTysAndBinds' :: [BindingType] -> FunEnvMap -> BindEnvMap -> Constant ->  [BindEnv] -> Maybe [BindEnv]
+joinTysAndBinds' [(BType [bname] rel ty)] _ _ c bResEnv = Just [(bname, c)] -- check type
+joinTysAndBinds' [(BType tnames rel ty)] fEnv bEnv (TupleLit ts) bResEnv =
+  case (map (\expr -> eval' expr fEnv bEnv) ts) of
+    res -> Just (zipWith (\x y -> (x, y)) tnames res)
+joinTysAndBinds' _ _ _ _ _ = Nothing

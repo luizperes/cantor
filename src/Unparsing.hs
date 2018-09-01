@@ -40,3 +40,6 @@ unparseType' t = show t
 unparseExpr' :: Expression -> String
 unparseExpr' (EConst c) = unparseConst' c
 unparseExpr' expr = show expr
+
+unparseCaseExpr' :: CaseExpression -> String
+unparseCaseExpr' expr = show expr
