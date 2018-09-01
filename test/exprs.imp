@@ -4,3 +4,7 @@ let sInUniverse = s in Universe # returns true
 let J = s :- 1 # s is redifined, but is not used
 let onePlusOne = 1 + 1 # return 2 as a constant
 let res = x in Z: x ^ 2, x > 0 # if x > 0, x in Z, return x power 2
+
+let sum1And3 = 1 + 3
+
+do sum1And3 . {}

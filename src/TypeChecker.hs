@@ -2,20 +2,21 @@ module TypeChecker where
   
 import Grammar
 
-isImpBoolType' :: BinaryOp -> Bool
-isImpBoolType' Eq  = True
-isImpBoolType' NEq = True
-isImpBoolType' Gt  = True
-isImpBoolType' GtE = True
-isImpBoolType' Lt  = True
-isImpBoolType' LtE = True
-isImpBoolType' _   = False
-
 impNumber' :: Constant -> Maybe Double
-impNumber' (NatLit c) = Just (fromIntegral c)
-impNumber' (IntLit c) = Just (fromIntegral c)
+impNumber' (NatLit c) = Just c
+impNumber' (IntLit c) = Just c
 impNumber' (DoubleLit c) = Just c
 impNumber' _ = Nothing
+
+arithmType' fn (NatLit a) (NatLit b) = NatLit (fn a b)
+arithmType' fn (IntLit a) (IntLit b) = IntLit (fn a b)
+arithmType' fn (IntLit a) (NatLit b) = IntLit (fn a b)
+arithmType' fn (NatLit a) (IntLit b) = IntLit (fn a b)
+arithmType' fn (DoubleLit a) (NatLit b) = DoubleLit (fn a b)
+arithmType' fn (NatLit a) (DoubleLit b) = DoubleLit (fn a b)
+arithmType' fn (DoubleLit a) (IntLit b) = DoubleLit (fn a b)
+arithmType' fn (IntLit a) (DoubleLit b) = DoubleLit (fn a b)
+arithmType' fn (DoubleLit a) (DoubleLit b) = DoubleLit (fn a b)
 
 {-
  - Type rules are as described on TYPE_RULES.md file

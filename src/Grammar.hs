@@ -6,8 +6,8 @@ data Constant = Epsilon   [Char]
               | BoolLit   Bool
               | CharLit   Char
               | DoubleLit Double
-              | IntLit    Integer
-              | NatLit    Integer
+              | IntLit    Double
+              | NatLit    Double
               | SetLit    [Expression]
               | TupleLit  [Expression]
               | TypeLit   Type

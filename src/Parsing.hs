@@ -139,10 +139,10 @@ doubleLit' = do
   return $ DoubleLit f
 
 naturalLit' :: Parser Constant
-naturalLit' = (natural >>= (\n -> return $ NatLit n))
+naturalLit' = (natural >>= (\n -> return $ NatLit (fromIntegral n)))
 
 intLit' :: Parser Constant
-intLit' = (integer >>= (\i -> return $ IntLit i))
+intLit' = (integer >>= (\i -> return $ IntLit (fromIntegral i)))
 
 charFromEscape :: Char -> Char
 charFromEscape '0' = '\0'

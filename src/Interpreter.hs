@@ -71,14 +71,11 @@ eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
       evalExpr -> case (apply' bname evalExpr fEnv bEnv) of
         Just c -> c
         _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
-eval' (EBinOp op expr1 expr2) fEnv bEnv
-  | isImpBoolType' op =
-    case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
-      Just b -> b
-      _ -> Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
-        (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
-  | otherwise = Epsilon ("Unimplemented for op " ++ (show op) ++
-    " " ++ (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
+eval' (EBinOp op expr1 expr2) fEnv bEnv =
+  case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
+    Just b -> b
+    _ -> Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
+      (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
 eval' (EType ty) fEnv bEnv =
   case ty of
     TCustom bname -> eval' (EBind bname) fEnv bEnv
@@ -114,6 +111,20 @@ applyBinOp' op c1 c2 =
         GtE -> Just (BoolLit (b1 >= b2))
         Lt  -> Just (BoolLit (b1 <  b2))
         LtE -> Just (BoolLit (b1 <= b2))
+        Add -> Just (arithmType' (+) c1 c2)
+        Sub -> Just (arithmType' (-) c1 c2)
+        Mul -> Just (arithmType' (*) c1 c2)
+        Div -> Just (DoubleLit ((/) b1 b2))
+        Mod -> case (c1, c2) of
+          (DoubleLit _, _) -> Nothing
+          (_, DoubleLit _) -> Nothing
+          _ -> Just (IntLit (fromIntegral ((mod) (ceiling b1) (ceiling b2))))
+        Exp -> Just (DoubleLit ((**) b1 b2))
+        -- TODO: finish all bin ops
+        -- Range ->
+        -- In
+        -- Subset
+        -- Def
         _ -> Nothing
     _ -> Nothing
 
