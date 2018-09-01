@@ -8,3 +8,5 @@ let res = x in Z: x ^ 2, x > 0 # if x > 0, x in Z, return x power 2
 let sum1And3 = 1 + 3
 
 do sum1And3 . {}
+
+do {5 + 5, 2 ^ 3}

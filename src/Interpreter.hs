@@ -89,7 +89,7 @@ interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
 interpretDo' (DoStmt fc) (fEnv, bEnv) = interpretFCall' fc (fEnv, bEnv)
 
 interpretFCall' :: FunctionCall -> (FunEnvMap, BindEnvMap) -> Constant
-interpretFCall' (FCSingle x) _ = x
+interpretFCall' (FCSingle x) (fEnv, bEnv) = (eval' (EConst x) fEnv bEnv)
 interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
   eval'
     (EBinOp FCall (EBind bname) (EConst (interpretFCall' fc (fEnv, bEnv))))
