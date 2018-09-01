@@ -1,0 +1,9 @@
+let sum = (a, b) in Z: a + b
+let div = (a, b) in R: a / b
+
+let printSum = a in Z: {'V', ':', a}
+
+do sum . (2, 2)
+do div . (2, 2)
+
+do printSum . sum . (2, 2)
