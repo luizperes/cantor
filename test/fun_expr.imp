@@ -1,5 +1,7 @@
-let sum = (a, b) in Z: a + b
-let div = (a, b) in R: a / b
+let sum  = (a, b) in Z: a + b
+let sum3 = a in Z, (b, c) in Z: a + b + c
+let sum8 = a in Z, (b, c) in Z, (d, e, f) in Z: a + b + c + d + e + f
+let div  = (a, b) in R: a / b
 
 let printSum = a in Z: {'V', ':', a}
 
@@ -7,3 +9,7 @@ do sum . (2, 2)
 do div . (2, 2)
 
 do printSum . sum . (2, 2)
+
+do printSum . sum3 . (2, (3, 5))
+
+do printSum . sum8 . (2, (3, 5), (6, 4, 1))

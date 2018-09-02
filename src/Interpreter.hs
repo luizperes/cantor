@@ -141,7 +141,7 @@ apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =
   case (Map.lookup bname fEnv) of
     Just (btys, expr) ->
-      case (joinTysAndBinds' btys fEnv bEnv input []) of
+      case (joinTysAndBinds' btys fEnv bEnv input) of
         Just paramsEnv ->
           Just (evalCaseExpr'
             expr
@@ -150,11 +150,24 @@ apply' bname input fEnv bEnv =
         _ -> Nothing
     _ -> Nothing
 
+joinTysAndBinds' :: [BindingType] -> FunEnvMap -> BindEnvMap -> Constant -> Maybe [BindEnv]
+joinTysAndBinds' [(BType [bname] rel ty)] fEnv bEnv c =
+  joinTyAndBind' (BType [bname] rel ty) fEnv bEnv c
+joinTysAndBinds' [(BType bnames rel ty)] fEnv bEnv (TupleLit ts) =
+  joinTyAndBind' (BType bnames rel ty) fEnv bEnv (TupleLit ts)
+joinTysAndBinds' btys fEnv bEnv (TupleLit ts) =
+  case (map (\expr -> eval' expr fEnv bEnv) ts) of
+    res ->
+      case sequence (zipWith (\bty c -> joinTyAndBind' bty fEnv bEnv c) btys res) of
+        Just lst -> Just (concat lst)
+        _ -> Nothing
+joinTysAndBinds' _ _ _ _ = Nothing
+
 -- TODO: check types
 -- TODO: implement tuples and sets
-joinTysAndBinds' :: [BindingType] -> FunEnvMap -> BindEnvMap -> Constant ->  [BindEnv] -> Maybe [BindEnv]
-joinTysAndBinds' [(BType [bname] rel ty)] _ _ c bResEnv = Just [(bname, c)] -- check type
-joinTysAndBinds' [(BType tnames rel ty)] fEnv bEnv (TupleLit ts) bResEnv =
+joinTyAndBind' :: BindingType -> FunEnvMap -> BindEnvMap -> Constant -> Maybe [BindEnv]
+joinTyAndBind' (BType [bname] rel ty) _ _ c = Just [(bname, c)] -- check type
+joinTyAndBind' (BType tnames rel ty) fEnv bEnv (TupleLit ts) =
   case (map (\expr -> eval' expr fEnv bEnv) ts) of
     res -> Just (zipWith (\x y -> (x, y)) tnames res)
-joinTysAndBinds' _ _ _ _ _ = Nothing
+joinTyAndBind' _ _ _ _ = Nothing
