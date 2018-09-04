@@ -7,6 +7,13 @@ let printSigned = x in Z:
                 [ { x }        x = 0 ]
                 [ { '-', x }   x < 0 ]
 
+let fact = n in Z:
+         [ 1                       n = 0 ]
+         [ 1                       n = 1 ]
+         [ n * fact . (n - 1)  otherwise ]
+
 do printSigned . absolute . -2
 do printSigned . absolute . 5
 do printSigned . absolute . 0
+
+do fact . 5

@@ -77,6 +77,11 @@ eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
       evalExpr -> case (apply' bname evalExpr fEnv bEnv) of
         Just c -> c
         _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
+eval' (EBinOp FCall (EBind bname) expr) fEnv bEnv =
+  eval'
+    (EBinOp FCall (EBind bname) (EConst (eval' expr fEnv bEnv)))
+    fEnv
+    bEnv
 eval' (EBinOp op expr1 expr2) fEnv bEnv =
   case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
     Epsilon r ->
@@ -149,6 +154,7 @@ applyBinOp' op c1 c2 =
   case (impNumber' c1, impNumber' c2) of
     (Just b1, Just b2) ->
       case op of
+        -- TODO: check equals for chars
         Eq  -> BoolLit (b1 == b2)
         NEq -> BoolLit (b1 /= b2)
         Gt  -> BoolLit (b1 >  b2)

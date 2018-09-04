@@ -257,9 +257,9 @@ operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Negation))        ]
              ]
 
 term' :: Parser Expression
-term' =   try (liftM EConst constant')
+term' =   liftM EBind bindingName'
+      <|> try (liftM EConst constant')
       <|> try (liftM EType type')
-      <|> liftM EBind bindingName'
       <|> parens expr'
 
 patternListStmt' :: Parser PatternStmt
