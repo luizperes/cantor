@@ -82,6 +82,7 @@ data BinaryOp = Add
               | In
               | Subset
               | Def
+              | And -- implicit
               deriving Show
 
 data Binding = BBind BindingName PatternStmt CaseExpression

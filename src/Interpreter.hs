@@ -2,6 +2,7 @@ module Interpreter where
 
 import System.Environment
 import qualified Data.Map.Strict as Map
+import Data.List
 import Grammar
 import Unparsing
 import TypeChecker
@@ -73,9 +74,10 @@ eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
         _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
 eval' (EBinOp op expr1 expr2) fEnv bEnv =
   case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
-    Just b -> b
-    _ -> Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
-      (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2))
+    Epsilon r ->
+      Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
+      (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2) ++ ". Reason: " ++ r)
+    c -> c
 eval' (EType ty) fEnv bEnv =
   case ty of
     TCustom bname -> eval' (EBind bname) fEnv bEnv
@@ -88,6 +90,17 @@ eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 -- TODO: finish CECase and CEList
 evalCaseExpr' :: CaseExpression -> FunEnvMap -> BindEnvMap -> Constant
 evalCaseExpr' (CEList [expr]) fEnv bEnv = eval' expr fEnv bEnv
+evalCaseExpr' (CEList (x:xs)) fEnv bEnv =
+  case (map (\expr -> eval' expr fEnv bEnv) xs) of
+    consts ->
+      case (foldl (\c1 c2 -> applyBinOp' And c1 c2) (BoolLit True) consts) of
+        BoolLit True -> eval' x fEnv bEnv
+        BoolLit False -> (BoolLit False)
+        _ ->
+          Epsilon ("Expressions: " ++
+          (intercalate ", " (map (\expr -> unparseExpr' expr) xs)) ++
+          " should all eval to boolean, however they eval'd to: " ++
+          (intercalate ", " (map (\c -> unparseConst' c) consts)))
 evalCaseExpr' expr _ _ = Epsilon ("Unimplemented " ++ (unparseCaseExpr' expr))
 -- return the first if all predicates
 -- evalCaseExpr' (CEList exprs) fEnv bEnv =
@@ -105,37 +118,42 @@ interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
     fEnv
     bEnv
 
-applyBinOp' :: BinaryOp -> Constant -> Constant -> Maybe Constant
+applyBinOp' :: BinaryOp -> Constant -> Constant -> Constant
 applyBinOp' op (BoolLit b1) (BoolLit b2) =
   case op of
-    Eq  -> Just (BoolLit (b1 == b2))
-    NEq -> Just (BoolLit (b1 /= b2))
+    Eq  -> BoolLit (b1 == b2)
+    NEq -> BoolLit (b1 /= b2)
+    And -> BoolLit (b1 && b2) -- implicit case for expr list
 applyBinOp' op c1 c2 =
   case (impNumber' c1, impNumber' c2) of
     (Just b1, Just b2) ->
       case op of
-        Eq  -> Just (BoolLit (b1 == b2))
-        NEq -> Just (BoolLit (b1 /= b2))
-        Gt  -> Just (BoolLit (b1 >  b2))
-        GtE -> Just (BoolLit (b1 >= b2))
-        Lt  -> Just (BoolLit (b1 <  b2))
-        LtE -> Just (BoolLit (b1 <= b2))
-        Add -> Just (arithmType' (+) c1 c2)
-        Sub -> Just (arithmType' (-) c1 c2)
-        Mul -> Just (arithmType' (*) c1 c2)
-        Div -> Just (DoubleLit ((/) b1 b2))
+        Eq  -> BoolLit (b1 == b2)
+        NEq -> BoolLit (b1 /= b2)
+        Gt  -> BoolLit (b1 >  b2)
+        GtE -> BoolLit (b1 >= b2)
+        Lt  -> BoolLit (b1 <  b2)
+        LtE -> BoolLit (b1 <= b2)
+        Add -> arithmType' (+) c1 c2
+        Sub -> arithmType' (-) c1 c2
+        Mul -> arithmType' (*) c1 c2
+        Div -> DoubleLit ((/) b1 b2)
         Mod -> case (c1, c2) of
-          (DoubleLit _, _) -> Nothing
-          (_, DoubleLit _) -> Nothing
-          _ -> Just (IntLit (fromIntegral ((mod) (ceiling b1) (ceiling b2))))
-        Exp -> Just (DoubleLit ((**) b1 b2))
+          (DoubleLit _, _) -> Epsilon ("Can't apply mod to doubles!")
+          (_, DoubleLit _) -> Epsilon ("Can't apply mod to doubles!")
+          _ -> IntLit (fromIntegral ((mod) (ceiling b1) (ceiling b2)))
+        Exp -> DoubleLit ((**) b1 b2)
         -- TODO: finish all bin ops
         -- Range ->
         -- In
         -- Subset
         -- Def
-        _ -> Nothing
-    _ -> Nothing
+        _ ->
+          Epsilon ("Can't apply (" ++ (show op) ++ ") to " ++
+          (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
+    _ ->
+      Epsilon ("Can't apply (" ++ (show op) ++ ") to " ++
+      (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
 
 apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =
