@@ -1,0 +1,12 @@
+let absolute = x in Z:
+             [ x    x >= 0 ]
+             [ -x   x <  0 ]
+
+let printSigned = x in Z:
+                [ { '+', x }   x > 0 ]
+                [ { x }        x = 0 ]
+                [ { '-', x }   x < 0 ]
+
+do printSigned . absolute . -2
+do printSigned . absolute . 5
+do printSigned . absolute . 0

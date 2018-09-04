@@ -62,7 +62,8 @@ data Quantif = ForAll
              | ThereExists
              deriving Show
 
-data UnaryOp = Neg
+data UnaryOp = Negation
+             | Negative
              deriving Show
 
 data BinaryOp = Add

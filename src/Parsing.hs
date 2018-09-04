@@ -235,8 +235,9 @@ inOp' = (reserved "in" <|> reservedOp "∈")
 subsetOp' =   ((reserved "subset" >> reserved "of")
           <|> reservedOp "⊆")
 
-operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Neg))          ]
+operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Negation))        ]
              , [Infix  (funcCallExpr'    >> return (EBinOp FCall)) AssocRight]
+             , [Prefix (reservedOp "-"   >> return (EUnOp  Negative))        ]
              , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocRight]
              , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
                 Infix  (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,

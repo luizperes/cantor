@@ -61,10 +61,15 @@ eval' (EBind v) _ bEnv =
   case Map.lookup v bEnv of
     Just value -> value
     _ -> Epsilon (v ++ " is not a valid binding name")
-eval' (EUnOp Neg expr) fEnv bEnv =
+eval' (EUnOp Negation expr) fEnv bEnv =
   case eval' expr fEnv bEnv of
     BoolLit b -> BoolLit (not b)
     _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
+eval' (EUnOp Negative expr) fEnv bEnv =
+  case (eval' expr fEnv bEnv) of
+    n -> case impNumber' n of
+      Just _ -> arithmType' (*) (IntLit (-1)) n
+      _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
   case expr of
     SetLit [] -> eval' (EBind bname) fEnv bEnv
@@ -87,25 +92,41 @@ eval' (EConst (TupleLit list)) fEnv bEnv = TupleLit (map (\x -> EConst(eval' x f
 eval' (EConst const) _ _ = const
 eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 
--- TODO: finish CECase and CEList
 evalCaseExpr' :: CaseExpression -> FunEnvMap -> BindEnvMap -> Constant
 evalCaseExpr' (CEList [expr]) fEnv bEnv = eval' expr fEnv bEnv
 evalCaseExpr' (CEList (x:xs)) fEnv bEnv =
   case (map (\expr -> eval' expr fEnv bEnv) xs) of
     consts ->
-      case (foldl (\c1 c2 -> applyBinOp' And c1 c2) (BoolLit True) consts) of
-        BoolLit True -> eval' x fEnv bEnv
-        BoolLit False -> (BoolLit False)
+      case (evalConstListToBool' consts fEnv bEnv) of
+        BoolLit True  -> eval' x fEnv bEnv
+        BoolLit False -> BoolLit False
         _ ->
           Epsilon ("Expressions: " ++
           (intercalate ", " (map (\expr -> unparseExpr' expr) xs)) ++
           " should all eval to boolean, however they eval'd to: " ++
           (intercalate ", " (map (\c -> unparseConst' c) consts)))
-evalCaseExpr' expr _ _ = Epsilon ("Unimplemented " ++ (unparseCaseExpr' expr))
--- return the first if all predicates
--- evalCaseExpr' (CEList exprs) fEnv bEnv =
---   map (\e -> eval' e fEnv bEnv) exprs
--- evalCaseExpr' (CECase cases) fEnv bEnv = ...
+evalCaseExpr' (CECase cases) fEnv bEnv = applyCond' cases fEnv bEnv
+
+applyCond' :: [(Expression, [Expression])] -> FunEnvMap -> BindEnvMap -> Constant
+applyCond' [] _ _ = BoolLit False
+applyCond' ((expr, condExprs):conds) fEnv bEnv =
+  case (map (\e -> eval' e fEnv bEnv) condExprs) of
+    consts ->
+      case (evalConstListToBool' consts fEnv bEnv) of
+        BoolLit True -> eval' expr fEnv bEnv
+        BoolLit False -> applyCond' conds fEnv bEnv
+        _ ->
+          Epsilon ("Expressions: " ++
+          (intercalate ", " (map (\e -> unparseExpr' e) condExprs)) ++
+          " should all eval to boolean, however they eval'd to: " ++
+          (intercalate ", " (map (\c -> unparseConst' c) consts)))
+
+evalConstListToBool' :: [Constant] -> FunEnvMap -> BindEnvMap -> Constant
+evalConstListToBool' consts fEnv bEnv =
+  case (foldl (\c1 c2 -> applyBinOp' And c1 c2) (BoolLit True) consts) of
+    BoolLit True  -> BoolLit True
+    BoolLit False -> BoolLit False
+    sth_else -> sth_else
 
 interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
 interpretDo' (DoStmt fc) (fEnv, bEnv) = interpretFCall' fc (fEnv, bEnv)
