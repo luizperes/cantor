@@ -1,6 +1,5 @@
-# Impero
-> Impero is inspired on set comprehensions and discrete math. Its name derives from the so-famous phrase "divide and conquer"
-> (from Latin dīvide et imperā, hence impero : to give orders, command / to rule, hold sway).
+# Cantor
+> Cantor is inspired on set comprehensions and discrete math. It is named after Georg Cantor, creator of set theory.
 
 #### Dependencies
   - `parsec`: Install with the command: `cabal install parsec`
@@ -10,10 +9,10 @@
   - `cabal run </path/to/file.imp>`
 
 #### EBNF and Railroad Diagram
-  - Impero's grammar can be found on the file [EBNF.md](EBNF.md)
+  - Cantor's grammar can be found on the file [EBNF.md](EBNF.md)
 
 #### Type Rules
-  - Impero's type rules can be found on the file [TYPE_RULES.md](TYPE_RULES.md)
+  - Cantor's type rules can be found on the file [TYPE_RULES.md](TYPE_RULES.md)
 
 #### Example
 ```Haskell

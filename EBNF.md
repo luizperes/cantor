@@ -1,4 +1,4 @@
-# Impero EBNF and Railroad diagram
+# Cantor EBNF and Railroad diagram
 
 - EBNF
   - [begin_stmt](#begin_stmt)

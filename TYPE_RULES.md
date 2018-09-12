@@ -1,4 +1,4 @@
-# Imperal type rules
+# Cantor type rules
   - [Epsilon](#epsilon)
   - [Natural](#natural)
   - [Integer](#integer)
