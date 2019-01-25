@@ -1,0 +1,5 @@
+let True = 1 = 1
+let StillTrue = ~~True
+
+do True . {}
+do StillTrue . {}
