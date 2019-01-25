@@ -1,5 +1,9 @@
 let True = 1 = 1
 let StillTrue = ~~True
+let DoubleNegation = --1
+let FancyFalse = ~~True~True
 
 do True . {}
 do StillTrue . {}
+do DoubleNegation . {}
+do FancyFalse . {}
