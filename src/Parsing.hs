@@ -49,7 +49,9 @@ languageDef =
            }
 
 start_symbol = oneOf "!@$_?|"
-other_symbol = oneOf "+-*/%^<>~"
+-- TODO: study what symbols will be valid as identifiers
+-- other_symbol = oneOf "+-*/%^<>~"
+other_symbol = oneOf ""
 
 lexer = Token.makeTokenParser languageDef
 
@@ -235,23 +237,24 @@ inOp' = (reserved "in" <|> reservedOp "∈")
 subsetOp' =   ((reserved "subset" >> reserved "of")
           <|> reservedOp "⊆")
 
-operators' = [ [Prefix (reservedOp "~"   >> return (EUnOp  Negation))        ]
-             , [Infix  (funcCallExpr'    >> return (EBinOp FCall)) AssocRight]
-             , [Prefix (reservedOp "-"   >> return (EUnOp  Negative))        ]
-             , [Infix  (reservedOp "^"   >> return (EBinOp Exp)) AssocRight]
-             , [Infix  (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
-                Infix  (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
-                Infix  (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
-             , [Infix  (reservedOp "+"   >> return (EBinOp Add)) AssocLeft,
-                Infix  (reservedOp "-"   >> return (EBinOp Sub)) AssocLeft]
-             , [Infix  (reservedOp ".."  >> return (EBinOp Range)) AssocNone]
-             , [Infix  (reservedOp ">"   >> return (EBinOp Gt )) AssocNone,
-                Infix  (reservedOp ">="  >> return (EBinOp GtE)) AssocNone,
-                Infix  (reservedOp "<"   >> return (EBinOp Lt )) AssocNone,
-                Infix  (reservedOp "<="  >> return (EBinOp LtE)) AssocNone]
-             , [Infix  (reservedOp "="   >> return (EBinOp Eq )) AssocNone,
-                Infix  (reservedOp "~"   >> return (EBinOp NEq)) AssocNone]
-             , [Infix  (inOp'            >> return (EBinOp In )) AssocNone,
+prefix' p = Prefix . chainl1 p $ return (.)
+operators' = [ [prefix' $ (char '~'       >> return (EUnOp  Negation))     ]
+             , [Infix   (funcCallExpr'    >> return (EBinOp FCall)) AssocRight]
+             , [prefix' $ (char '-'       >> return (EUnOp  Negative))     ]
+             , [Infix   (reservedOp "^"   >> return (EBinOp Exp)) AssocRight]
+             , [Infix   (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
+                Infix   (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
+                Infix   (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
+             , [Infix   (reservedOp "+"   >> return (EBinOp Add)) AssocLeft,
+                Infix   (reservedOp "-"   >> return (EBinOp Sub)) AssocLeft]
+             , [Infix   (reservedOp ".."  >> return (EBinOp Range)) AssocNone]
+             , [Infix   (reservedOp ">"   >> return (EBinOp Gt )) AssocNone,
+                Infix   (reservedOp ">="  >> return (EBinOp GtE)) AssocNone,
+                Infix   (reservedOp "<"   >> return (EBinOp Lt )) AssocNone,
+                Infix   (reservedOp "<="  >> return (EBinOp LtE)) AssocNone]
+             , [Infix   (reservedOp "="   >> return (EBinOp Eq )) AssocNone,
+                Infix   (reservedOp "~"   >> return (EBinOp NEq)) AssocNone]
+             , [Infix   (inOp'            >> return (EBinOp In )) AssocNone,
                 Infix  (subsetOp'        >> return (EBinOp Subset)) AssocNone]
              , [Infix  (reservedOp ":-"  >> return (EBinOp Def)) AssocRight]
              ]
