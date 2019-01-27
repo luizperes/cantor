@@ -1,6 +1,6 @@
 let Point = x in Z, y in Z: (x, y)
 
-let Point2 = (x ∈ Z, y ∈ Z)
+let Point2 = x ∈ Z, y ∈ Z: Point . (x, y)
 
 let TyTuple = ty ∈ Type1, x ∈ Type2: (ty, x)
 
