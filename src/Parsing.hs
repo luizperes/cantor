@@ -30,15 +30,10 @@ languageDef =
                                      , "otherwise"
                                      , "union"
                                      , "intersection"
-                                     , "N"
-                                     , "Z"
-                                     , "R"
-                                     , "Char"
-                                     , "Universe"
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , ".."
-                                     , "<", ">", ">=", "<="
+                                     , "<", ">", ">=", "<=", "=>"
                                      , "=", "~"
                                      , "∀", "∃", "∈", "⊆", "∘"
                                      , ":-", "->", "\\"
@@ -209,7 +204,7 @@ listCase' = do
 binding' :: Parser Binding
 binding' = do
   bindName <- bindingName'
-  symbol "="
+  symbol "=>"
   pattern <- patternListStmt'
   symbol ":"
   cases <- (multiCase' <|> listCase')
@@ -335,11 +330,11 @@ typeExpr' =   typeN'
           <|> typeCustom'
           <|> typeGroup'
 
-typeN' = reserved "N" >> return TN
-typeZ' = reserved "Z" >> return TZ
-typeR' = reserved "R" >> return TR
-typeChar' = reserved "Char" >> return TChar
-typeUniverse' = reserved "Universe" >> return TUniverse
+typeN' = symbol "N" >> return TN
+typeZ' = symbol "Z" >> return TZ
+typeR' = symbol "R" >> return TR
+typeChar' = symbol "Char" >> return TChar
+typeUniverse' = symbol "Universe" >> return TUniverse
 typeCustom' = do
   bindName <- bindingName'
   return $ TCustom bindName

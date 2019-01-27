@@ -1,5 +1,5 @@
 let
-  head = x in Universe: x
-  tail = y subset of Char: y - (head . y)
+  head => x in Universe: x
+  tail => y subset of Char: y - (head . y)
 do
   tail . {1, 2, 3}

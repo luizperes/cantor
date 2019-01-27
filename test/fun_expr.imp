@@ -1,9 +1,9 @@
-let sum  = (a, b) in Z: a + b
-let sum3 = a in Z, (b, c) in Z*'Z: a + b + c
-let sum8 = a in Z, (b, c) in Z*'Z, (d, e, f) in Z*'Z*'Z: a + b + c + d + e + f
-let div  = (a, b) in R: a / b
+let sum  => (a, b) in Z: a + b
+let sum3 => a in Z, (b, c) in Z*'Z: a + b + c
+let sum8 => a in Z, (b, c) in Z*'Z, (d, e, f) in Z*'Z*'Z: a + b + c + d + e + f
+let div  => (a, b) in R: a / b
 
-let printSum = a in Z: {'V', ':', a}
+let printSum => a in Z: {'V', ':', a}
 
 do sum . (2, 2)
 do div . (2, 2)

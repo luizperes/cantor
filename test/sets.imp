@@ -1,6 +1,6 @@
 let x = {1, 2>2, 'C'}
 
-let y = x in Z: 1+1
+let y => x in Z: 1+1
 
 do x . {}
 

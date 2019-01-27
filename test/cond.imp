@@ -1,13 +1,13 @@
-let absolute = x in Z:
+let absolute => x in Z:
              [ x    x >= 0 ]
              [ -x   x <  0 ]
 
-let printSigned = x in Z:
+let printSigned => x in Z:
                 [ { '+', x }   x > 0 ]
                 [ { x }        x = 0 ]
                 [ { '-', x }   x < 0 ]
 
-let fact = n in Z:
+let fact => n in Z:
          [ 1                       n = 0 ]
          [ 1                       n = 1 ]
          [ n * fact . (n - 1)  otherwise ]
