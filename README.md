@@ -17,9 +17,9 @@
 #### Example
 ```Haskell
 let
-  square = s subset of Z: x ^ 2, for all x in s
-  allEven = s subset of Z: (x % 2) = 0, for all x in s
-  ifThereIsANumberGreaterThan10 = s subset of Z: x > 10, there exists x in s
+  square => s subset of Z: x ^ 2, for all x in s
+  allEven => s subset of Z: (x % 2) = 0, for all x in s
+  ifThereIsANumberGreaterThan10 => s subset of Z: x > 10, there exists x in s
 do
   square .
   allEven .
@@ -30,9 +30,9 @@ do
 The code above can also be written:
 ```Haskell
 let
-  square = s ⊆ Z: x ^ 2, ∀x ∈ s
-  allEven = s ⊆ Z: (x % 2) = 0, ∀x ∈ s
-  ifThereIsANumberGreaterThan10 = s ⊆ Z: x > 10, ∃x ∈ s
+  square => s ⊆ Z: x ^ 2, ∀x ∈ s
+  allEven => s ⊆ Z: (x % 2) = 0, ∀x ∈ s
+  ifThereIsANumberGreaterThan10 => s ⊆ Z: x > 10, ∃x ∈ s
 do
   square ∘
   allEven ∘
@@ -47,10 +47,10 @@ do
 
 #### Factorial
 ```Haskell
-let fact = x ∈ N:
-         [ 1                        x = 0 ]
-         [ 1                        x = 1 ]
-         [ x * fact ∘ (x - 1)   otherwise ]
+let fact => x ∈ N:
+         [  1                        x = 0  ]
+         [  1                        x = 1  ]
+         [  x * fact ∘ (x - 1)   otherwise  ]
 ```
 
 ### Help
