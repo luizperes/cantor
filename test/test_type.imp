@@ -1,4 +1,4 @@
-let yetYetAnotherTry = (x, y, z) ∈ Point × Z
+let yetYetAnotherTry = (p, x) ∈ Point × Z
 
 /'
 [

@@ -314,10 +314,10 @@ type' = buildExpressionParser operatorsTy' typeExpr'
 operatorsTy' = [
                   [Infix (unionOp'         >> return (TBinOp Union)) AssocLeft,
                   Infix  (intersecOp'      >> return (TBinOp Intersection)) AssocLeft,
-                  Infix  (cartProdOp'      >> return (TBinOp CartProduct)) AssocNone,
+                  Infix  (cartProdOp'      >> return (TBinOp CartProduct)) AssocLeft,
                   Infix  (symDiffOp'       >> return (TBinOp SymmetricDiff)) AssocLeft,
                   Infix  (relDiffOp'       >> return (TBinOp RelativeDiff)) AssocLeft,
-                  Infix  (funOp'           >> return (TBinOp Function)) AssocNone]
+                  Infix  (funOp'           >> return (TBinOp Function)) AssocLeft]
                ]
 
 unionOp' = (reserved "union" <|> reservedOp "∪")

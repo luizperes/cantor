@@ -13,3 +13,5 @@ let Bre = p ∈ Universe:
 let IntTuple = x ∈ Universe, y ∈ Universe:
              [ (x, y)     x ∈ Z, y ∈ Z ]
              [ {}            otherwise ]
+
+do Bre . {(1, 5)}
