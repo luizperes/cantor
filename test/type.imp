@@ -1,6 +1,6 @@
 # Functions
 
-let map => f ∈ Universe → Universe, s ⊆ Universe: ∀x ∈ s, (f∘x)
+let map => f ∈ Universe → Universe, s ⊆ Universe: (f∘x), ∀x ∈ s
 let square => x ∈ Z: x^2
 
 # Basic Definitions
@@ -32,16 +32,16 @@ let set8 => s ⊆ set1 ∩ set2 union set3: s
 
 # Composition
 
-let Point = (x, y) ∈ Z × Z
+let Point => (x, y) ∈ Z × Z: (x, y)
 
 let addOneToPositionX => (x, y) ∈ Point: (x+1, y)
 
-let anotherTry = x ∈ Point
+let anotherTry => x ∈ Point: x
 
-let yetAnotherTry = (x, y) ∈ Point
+let yetAnotherTry => (x, y) ∈ Point: (x, y)
 
-let yetYetAnotherTry = (x, y, z) ∈ Point × G
+let yetYetAnotherTry => (x, y, z) ∈ Point × G: (x, y, z)
 
-let yetYetAnotherTry = (x, y, z) ∈ Point × Z
+let yetYetAnotherTry => (x, y, z) ∈ Point × Z: (x, y, z)
 
 do map ∘ (square, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
