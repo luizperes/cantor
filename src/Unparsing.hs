@@ -41,5 +41,12 @@ unparseExpr' :: Expression -> String
 unparseExpr' (EConst c) = unparseConst' c
 unparseExpr' expr = show expr
 
+-- TODO: write the unparsing for the expressions
+-- EBinOp BinaryOp Expression Expression
+--                | EUnOp UnaryOp Expression
+--                | EConst Constant
+--                | EBind BindingName
+--                | EQtOp Quantif BindingType
+
 unparseCaseExpr' :: CaseExpression -> String
 unparseCaseExpr' expr = show expr

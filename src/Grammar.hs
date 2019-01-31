@@ -54,7 +54,6 @@ data Expression = EBinOp BinaryOp Expression Expression
                 | EUnOp UnaryOp Expression
                 | EConst Constant
                 | EBind BindingName
-                | EType Type
                 | EQtOp Quantif BindingType
                 deriving Show
 

@@ -88,10 +88,6 @@ eval' (EBinOp op expr1 expr2) fEnv bEnv =
       Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
       (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2) ++ ". Reason: " ++ r)
     c -> c
-eval' (EType ty) fEnv bEnv =
-  case ty of
-    TCustom bname -> eval' (EBind bname) fEnv bEnv
-    _ -> (TypeLit ty)
 eval' (EConst (SetLit list)) fEnv bEnv = SetLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
 eval' (EConst (TupleLit list)) fEnv bEnv = TupleLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
 eval' (EConst const) _ _ = const
