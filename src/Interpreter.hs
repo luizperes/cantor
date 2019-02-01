@@ -84,9 +84,7 @@ eval' (EBinOp FCall (EBind bname) expr) fEnv bEnv =
     bEnv
 eval' (EBinOp op expr1 expr2) fEnv bEnv =
   case (applyBinOp' op (eval' expr1 fEnv bEnv) (eval' expr2 fEnv bEnv)) of
-    Epsilon r ->
-      Epsilon ("Operation " ++ (show op) ++ " can't be applied to " ++
-      (unparseExpr' expr1) ++ " and " ++ (unparseExpr' expr2) ++ ". Reason: " ++ r)
+    Epsilon r -> Epsilon r
     c -> c
 eval' (EConst (SetLit list)) fEnv bEnv = SetLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
 eval' (EConst (TupleLit list)) fEnv bEnv = TupleLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
@@ -102,9 +100,9 @@ evalCaseExpr' (CEList (x:xs)) fEnv bEnv =
         BoolLit True  -> eval' x fEnv bEnv
         BoolLit False -> BoolLit False
         _ ->
-          Epsilon ("Expressions: " ++
+          Epsilon ("Expression(s): " ++
           (intercalate ", " (map (\expr -> unparseExpr' expr) xs)) ++
-          " should all eval to boolean, however they eval'd to: " ++
+          " should eval to boolean, however it failed with: " ++
           (intercalate ", " (map (\c -> unparseConst' c) consts)))
 evalCaseExpr' (CECase cases) fEnv bEnv = applyCond' cases fEnv bEnv
 
@@ -117,9 +115,9 @@ applyCond' ((expr, condExprs):conds) fEnv bEnv =
         BoolLit True -> eval' expr fEnv bEnv
         BoolLit False -> applyCond' conds fEnv bEnv
         _ ->
-          Epsilon ("Expressions: " ++
+          Epsilon ("Expression(s): " ++
           (intercalate ", " (map (\e -> unparseExpr' e) condExprs)) ++
-          " should all eval to boolean, however they eval'd to: " ++
+          " should eval to boolean, however it failed with: " ++
           (intercalate ", " (map (\c -> unparseConst' c) consts)))
 
 evalConstListToBool' :: [Constant] -> FunEnvMap -> BindEnvMap -> Constant
@@ -172,10 +170,10 @@ applyBinOp' op c1 c2 =
         -- Subset
         -- Def
         _ ->
-          Epsilon ("Can't apply (" ++ (show op) ++ ") to " ++
+          Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
           (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
     _ ->
-      Epsilon ("Can't apply (" ++ (show op) ++ ") to " ++
+      Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
       (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
 
 apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant

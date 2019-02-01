@@ -24,8 +24,8 @@ unparseList' [] strs = concat (intersperse ", " strs)
 unparseList' (x:xs) strs = unparseList' xs (strs ++ ((unparseExpr' x):[]))
 
 unparseRel' :: Relationship -> String
-unparseRel' (SubsetOf) = "subset of"
-unparseRel' (ElementOf) = "in"
+unparseRel' (SubsetOf) = unparseBinOp' Subset
+unparseRel' (ElementOf) = unparseBinOp' In
 
 unparseBind' :: BindingName -> String
 unparseBind' id = id
@@ -34,16 +34,50 @@ unparseType' :: Type -> String
 unparseType' (TUniverse) = "Universe"
 unparseType' t = show t
 
+unparseBType' :: BindingType -> String
+unparseBType' (BType binds rel ty) =
+  concat (intersperse ", " binds) ++
+  " " ++ (unparseRel' rel) ++ " " ++
+  (unparseType' ty)
+
 unparseExpr' :: Expression -> String
 unparseExpr' (EConst c) = unparseConst' c
-unparseExpr' expr = show expr
-
--- TODO: write the unparsing for the expressions
--- EBinOp BinaryOp Expression Expression
---                | EUnOp UnaryOp Expression
---                | EConst Constant
---                | EBind BindingName
---                | EQtOp Quantif BindingType
+unparseExpr' (EUnOp op expr) = (unparseUnOp' op) ++ (unparseExpr' expr)
+unparseExpr' (EBinOp op e1 e2) =
+  (unparseExpr' e1) ++ " " ++ (unparseBinOp' op) ++ " " ++ (unparseExpr' e2)
+unparseExpr' (EBind binding) = binding
+unparseExpr' (EQtOp qnt btype) =
+  case qnt of
+    ForAll -> "∀" ++ (unparseBType' btype)
+    ThereExists -> "∃" ++ (unparseBType' btype)
 
 unparseCaseExpr' :: CaseExpression -> String
 unparseCaseExpr' expr = show expr
+
+unparseUnOp' :: UnaryOp -> String
+unparseUnOp' op =
+  case op of
+    Negation -> "~"
+    Negative -> "-"
+
+unparseBinOp' :: BinaryOp -> String
+unparseBinOp' op =
+  case op of
+    Add -> "+"
+    Sub -> "-"
+    Mul -> "*"
+    Div -> "/"
+    Mod -> "%"
+    Exp -> "^"
+    Eq  -> "="
+    NEq -> "~"
+    Gt  -> ">"
+    GtE -> ">="
+    Lt  -> "<"
+    LtE -> "<="
+    FCall -> "∘"
+    Range -> ".."
+    In -> "∈"
+    Subset -> "⊆"
+    Def -> ":-"
+    And -> ","
