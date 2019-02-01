@@ -17,11 +17,7 @@ type Identifier = String
 
 type BindingName = Identifier
 
-data Type = TN
-          | TZ
-          | TR
-          | TChar
-          | TUniverse
+data Type = TUniverse
           | TCustom BindingName
           | TBinOp SetOp Type Type
           | TGroup Type

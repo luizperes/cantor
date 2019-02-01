@@ -31,9 +31,6 @@ unparseBind' :: BindingName -> String
 unparseBind' id = id
 
 unparseType' :: Type -> String
-unparseType' (TN) = "N"
-unparseType' (TZ) = "Z"
-unparseType' (TChar) = "Char"
 unparseType' (TUniverse) = "Universe"
 unparseType' t = show t
 
