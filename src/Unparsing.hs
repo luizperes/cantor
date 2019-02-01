@@ -27,12 +27,13 @@ unparseRel' :: Relationship -> String
 unparseRel' (SubsetOf) = unparseBinOp' Subset
 unparseRel' (ElementOf) = unparseBinOp' In
 
-unparseBind' :: BindingName -> String
-unparseBind' id = id
+--unparseBind' :: BindingName -> String
+--unparseBind' id = id
 
 unparseType' :: Type -> String
 unparseType' (TUniverse) = "Universe"
 unparseType' t = show t
+-- TODO: implement unparse of type expressions
 
 unparseBType' :: BindingType -> String
 unparseBType' (BType binds rel ty) =
@@ -53,6 +54,7 @@ unparseExpr' (EQtOp qnt btype) =
 
 unparseCaseExpr' :: CaseExpression -> String
 unparseCaseExpr' expr = show expr
+-- TODO: implement unparse of case expressions
 
 unparseUnOp' :: UnaryOp -> String
 unparseUnOp' op =

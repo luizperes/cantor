@@ -1,3 +1,5 @@
+let N = 1..2
+
 let Natural = N
 
 do Natural . {}
