@@ -89,7 +89,6 @@ eval' (EBinOp op expr1 expr2) fEnv bEnv =
 eval' (EConst (SetLit list)) fEnv bEnv = SetLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
 eval' (EConst (TupleLit list)) fEnv bEnv = TupleLit (map (\x -> EConst(eval' x fEnv bEnv)) list)
 eval' (EConst const) _ _ = const
-eval' expr fEnv bEnv = Epsilon ("Can't eval " ++ (unparseExpr' expr))
 
 evalCaseExpr' :: CaseExpression -> FunEnvMap -> BindEnvMap -> Constant
 evalCaseExpr' (CEList [expr]) fEnv bEnv = eval' expr fEnv bEnv

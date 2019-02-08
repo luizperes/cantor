@@ -20,10 +20,6 @@ languageDef =
                                    <|> other_symbol
            , Token.reservedNames   = [ "let"
                                      , "do"
-                                     , "for"
-                                     , "all"
-                                     , "there"
-                                     , "exists"
                                      , "subset"
                                      , "of"
                                      , "in"
@@ -36,8 +32,8 @@ languageDef =
                                      , ".."
                                      , "<", ">", ">=", "<=", "=>"
                                      , "=", "~"
-                                     , "∀", "∃", "∈", "⊆", "∘"
-                                     , ":-", "->", "\\"
+                                     , "∈", "⊆", "∘"
+                                     , "->", "\\"
                                      , "∪", "∩", "×", "⊖", "→"
                                      , "*'", "-'"
                                      ]
@@ -176,7 +172,7 @@ statement' =   letStmt'
 listExpr' :: Parser [Expression]
 listExpr' = do
   expr <- expr'
-  exprs <- option [] (symbol "," >> (commaSep (expr' <|> quantExpr')))
+  exprs <- option [] (symbol "," >> (commaSep expr'))
   return $ [expr] ++ exprs
 
 otherwise' :: Parser [Expression]
@@ -252,7 +248,6 @@ operators' = [ [prefix' $ (char '~'       >> return (EUnOp  Negation))     ]
                 Infix   (reservedOp "~"   >> return (EBinOp NEq)) AssocNone]
              , [Infix   (inOp'            >> return (EBinOp In )) AssocNone,
                 Infix  (subsetOp'        >> return (EBinOp Subset)) AssocNone]
-             , [Infix  (reservedOp ":-"  >> return (EBinOp Def)) AssocRight]
              ]
 
 term' :: Parser Expression
@@ -272,21 +267,6 @@ simpleStmt' :: Parser PatternStmt
 simpleStmt' = do
   bindType <- bindingType'
   return $ SimpleStmt bindType
-
-quantExpr' :: Parser Expression
-quantExpr' = forAllExpr' <|> thereExistsExpr'
-
-forAllExpr' :: Parser Expression
-forAllExpr' = do
-  ((reserved "for" >> reserved "all") <|> reservedOp "∀")
-  bindType <- bindingType'
-  return $ EQtOp ForAll bindType
-
-thereExistsExpr' :: Parser Expression
-thereExistsExpr' = do
-  ((reserved "there" >> reserved "exists") <|> reservedOp "∃")
-  bindType <- bindingType'
-  return $ EQtOp ThereExists bindType
 
 bindingType' :: Parser BindingType
 bindingType' = do

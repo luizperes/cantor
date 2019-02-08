@@ -51,10 +51,6 @@ unparseExpr' (EUnOp op expr) = (unparseUnOp' op) ++ (unparseExpr' expr)
 unparseExpr' (EBinOp op e1 e2) =
   (unparseExpr' e1) ++ " " ++ (unparseBinOp' op) ++ " " ++ (unparseExpr' e2)
 unparseExpr' (EBind binding) = binding
-unparseExpr' (EQtOp qnt btype) =
-  case qnt of
-    ForAll -> "∀" ++ (unparseBType' btype)
-    ThereExists -> "∃" ++ (unparseBType' btype)
 
 -- TODO: check whether or not case expressions are needed
 unparseCaseExpr' :: CaseExpression -> String
@@ -85,5 +81,4 @@ unparseBinOp' op =
     Range -> ".."
     In -> "∈"
     Subset -> "⊆"
-    Def -> ":-"
     And -> ","

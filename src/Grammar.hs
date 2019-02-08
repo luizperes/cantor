@@ -49,12 +49,7 @@ data Expression = EBinOp BinaryOp Expression Expression
                 | EUnOp UnaryOp Expression
                 | EConst Constant
                 | EBind BindingName
-                | EQtOp Quantif BindingType
                 deriving Show
-
-data Quantif = ForAll
-             | ThereExists
-             deriving Show
 
 data UnaryOp = Negation
              | Negative
@@ -76,7 +71,6 @@ data BinaryOp = Add
               | Range
               | In
               | Subset
-              | Def
               | And -- implicit
               deriving Show
 
