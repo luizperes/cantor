@@ -17,7 +17,6 @@ unparseConst' (IntLit c) = show (ceiling c)
 unparseConst' (DoubleLit c) = show c
 unparseConst' (CharLit c) = "'" ++ [c] ++ "'"
 unparseConst' (BoolLit c) = show c
-unparseConst' (TypeLit c) = unparseType' c
 
 unparseList' :: [Expression] -> [String] -> String
 unparseList' [] strs = concat (intersperse ", " strs)

@@ -10,7 +10,6 @@ data Constant = Epsilon   [Char]
               | NatLit    Double
               | SetLit    [Expression]
               | TupleLit  [Expression]
-              | TypeLit   Type
               deriving Show
 
 type Identifier = String

@@ -67,7 +67,7 @@ eval' (EUnOp Negation expr) fEnv bEnv =
     _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
 eval' (EUnOp Negative expr) fEnv bEnv =
   case (eval' expr fEnv bEnv) of
-    n -> case impNumber' n of
+    n -> case isNumber' n of
       Just _ -> arithmType' (*) (IntLit (-1)) n
       _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
@@ -145,10 +145,9 @@ applyBinOp' op (BoolLit b1) (BoolLit b2) =
     NEq -> BoolLit (b1 /= b2)
     And -> BoolLit (b1 && b2) -- implicit case for expr list
 applyBinOp' op c1 c2 =
-  case (impNumber' c1, impNumber' c2) of
+  case (isNumber' c1, isNumber' c2) of
     (Just b1, Just b2) ->
       case op of
-        -- TODO: check equals for chars
         Eq  -> BoolLit (b1 == b2)
         NEq -> BoolLit (b1 /= b2)
         Gt  -> BoolLit (b1 >  b2)
@@ -164,17 +163,23 @@ applyBinOp' op c1 c2 =
           (_, DoubleLit _) -> Epsilon ("Can't apply mod to doubles!")
           _ -> IntLit (fromIntegral ((mod) (ceiling b1) (ceiling b2)))
         Exp -> DoubleLit ((**) b1 b2)
-        -- TODO: finish all bin ops
-        -- Range ->
-        -- In
-        -- Subset
-        -- Def
+        Range -> SetLit (map (\x -> EConst (DoubleLit x)) [b1..b2])
         _ ->
           Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
           (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
     _ ->
-      Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
-      (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
+      case (isChar' c1, isChar' c2) of
+        (Just cc1, Just cc2) ->
+          case op of
+            Eq  -> BoolLit (cc1 == cc2)
+            NEq -> BoolLit (cc1 /= cc2)
+            Range -> SetLit (map (\x -> EConst (CharLit x)) [cc1..cc2])
+            _ ->
+              Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
+              (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
+        _ ->
+          Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
+          (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
 
 apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =

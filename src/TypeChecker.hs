@@ -2,11 +2,15 @@ module TypeChecker where
   
 import Grammar
 
-impNumber' :: Constant -> Maybe Double
-impNumber' (NatLit c) = Just c
-impNumber' (IntLit c) = Just c
-impNumber' (DoubleLit c) = Just c
-impNumber' _ = Nothing
+isNumber' :: Constant -> Maybe Double
+isNumber' (NatLit c) = Just c
+isNumber' (IntLit c) = Just c
+isNumber' (DoubleLit c) = Just c
+isNumber' _ = Nothing
+
+isChar' :: Constant -> Maybe Char
+isChar' (CharLit c) = Just c
+isChar' _ = Nothing
 
 arithmType' fn (NatLit a) (NatLit b) = NatLit (fn a b)
 arithmType' fn (IntLit a) (IntLit b) = IntLit (fn a b)
