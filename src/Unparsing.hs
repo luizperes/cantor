@@ -27,13 +27,18 @@ unparseRel' :: Relationship -> String
 unparseRel' (SubsetOf) = unparseBinOp' Subset
 unparseRel' (ElementOf) = unparseBinOp' In
 
---unparseBind' :: BindingName -> String
---unparseBind' id = id
-
 unparseType' :: Type -> String
 unparseType' (TUniverse) = "Universe"
-unparseType' t = show t
--- TODO: implement unparse of type expressions
+unparseType' (TGroup ty) = "(" ++ (unparseType' ty) ++ ")"
+unparseType' (TCustom binding) = binding
+unparseType' (TBinOp op t1 t2) =
+  case op of
+   Union -> (unparseType' t1) ++ " ∪ " ++ (unparseType' t2)
+   Intersection -> (unparseType' t1) ++ " ∩ " ++ (unparseType' t2)
+   CartProduct -> (unparseType' t1) ++ " × " ++ (unparseType' t2)
+   SymmetricDiff -> (unparseType' t1) ++ " ⊖ " ++ (unparseType' t2)
+   RelativeDiff -> (unparseType' t1) ++ " \\\\ " ++ (unparseType' t2)
+   Function -> (unparseType' t1) ++ " → " ++ (unparseType' t2)
 
 unparseBType' :: BindingType -> String
 unparseBType' (BType binds rel ty) =
@@ -52,9 +57,9 @@ unparseExpr' (EQtOp qnt btype) =
     ForAll -> "∀" ++ (unparseBType' btype)
     ThereExists -> "∃" ++ (unparseBType' btype)
 
+-- TODO: check whether or not case expressions are needed
 unparseCaseExpr' :: CaseExpression -> String
 unparseCaseExpr' expr = show expr
--- TODO: implement unparse of case expressions
 
 unparseUnOp' :: UnaryOp -> String
 unparseUnOp' op =
