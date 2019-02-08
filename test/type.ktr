@@ -1,6 +1,17 @@
+# Main
+
+let head => y subset of Universe: any
+let tail => y subset of Universe: y - (head . y)
+
+let True  = 1 = 1
+let False = ~True
+
 # Functions
 
-let map => f ∈ Universe → Universe, s ⊆ Universe: (f∘x), ∀x ∈ s
+let map => f ∈ Universe → Universe, s ⊆ Universe, x ∈ s, acc ⊆ Universe:
+        [  acc                                                  s = {}  ]
+        [  map . (f, s - x, head . (s - x), (f∘x) + acc)     otherwise  ]
+
 let square => x ∈ Z: x^2
 
 # Basic Definitions

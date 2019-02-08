@@ -27,6 +27,7 @@ languageDef =
                                      , "union"
                                      , "intersection"
                                      , "Universe"
+                                     , "any"
                                      ]
            , Token.reservedOpNames = [ "+", "-", "*", "/", "%", "^"
                                      , ".."
@@ -109,6 +110,12 @@ constant' = try
           <|> char'
           <|> tuple'
           <|> set'
+          <|> any'
+
+any' :: Parser Constant
+any' = do
+  reserved "any"
+  return $ AnyLit
 
 set' :: Parser Constant
 set' = do
@@ -251,8 +258,8 @@ operators' = [ [prefix' $ (char '~'       >> return (EUnOp  Negation))     ]
              ]
 
 term' :: Parser Expression
-term' =   liftM EBind bindingName'
-      <|> try (liftM EConst constant')
+term' =   try (liftM EConst constant')
+      <|> liftM EBind bindingName'
       <|> parens expr'
 
 patternListStmt' :: Parser PatternStmt

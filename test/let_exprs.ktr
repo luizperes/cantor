@@ -6,3 +6,4 @@ let anything => x in Z: x, (isChar . 'z')
 
 do isChar . '\n'
 do isChar . 'c'
+do isChar . 2

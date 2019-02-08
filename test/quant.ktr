@@ -1,8 +1,0 @@
-let x = 1
-
-let y => s subset of Z: 1, for all x in Z
-
-# error
-# let z = s subset of Z: (for all x in Z) * 2
-
-do y . {x}

@@ -16,10 +16,31 @@
 
 #### Example
 ```Haskell
+# simulating head and tail (as if sets were lists) ...
+let head => y subset of Universe: any
+let tail => y subset of Universe: y - (head . y)
+
+let True  = 1 = 1
+let False = ~True
+
+# ∀xP(x)
+let forall => P in Universe, X subset of Universe, x in X:
+           [  True                                              X = {}  ]
+           [  True          P . x, forall . (P, X - x, head . (X - x))  ]
+           [  False                                          otherwise  ]
+
+# ∃xP(x)
+let exists => P in Universe, X subset of Universe, x in X:
+           [  False                                        X = {}  ]
+           [  True                                         P . x   ]
+           [  exists . (P, X - x, head . (X - x))       otherwise  ]
+
 let
-  square => s subset of Z: x ^ 2, for all x in s
-  allEven => s subset of Z: (x % 2) = 0, for all x in s
-  ifThereIsANumberGreaterThan10 => s subset of Z: x > 10, there exists x in s
+  square => x in Z: x ^ 2
+  pred => x in Z: (x % 2) = 0
+  allEven => s subset of Z: forall . (pred, s, s - (head . s))
+  pred2 => x in Z: x > 10
+  ifThereIsANumberGreaterThan10 => s subset of Z: exists . (pred2, s, s - (head . s))
 do
   square .
   allEven .
@@ -29,10 +50,31 @@ do
 
 The code above can also be written:
 ```Haskell
+# simulating head and tail (as if sets were lists) ...
+let head => y ⊆ Universe: any
+let tail => y ⊆ Universe: y - (head . y)
+
+let True  = 1 = 1
+let False = ~True
+
+# ∀xP(x)
+let ∀ => P ∈ Universe, X ⊆ Universe, x ∈ X:
+      [  True                                              X = {}  ]
+      [  True               P ∘ x, ∀ ∘ (P, X - x, head ∘ (X - x))  ]
+      [  False                                          otherwise  ]
+
+# ∃xP(x)
+let ∃ => P ∈ Universe, X ⊆ Universe, x ∈ X:
+      [  False                                        X = {}  ]
+      [  True                                         P ∘ x   ]
+      [  ∃ ∘ (P, X - x, head ∘ (X - x))            otherwise  ]
+
 let
-  square => s ⊆ Z: x ^ 2, ∀x ∈ s
-  allEven => s ⊆ Z: (x % 2) = 0, ∀x ∈ s
-  ifThereIsANumberGreaterThan10 => s ⊆ Z: x > 10, ∃x ∈ s
+  square  => s ⊆ Z: x ^ 2
+  pred => x ∈ Z: (x % 2) = 0
+  allEven => s ⊆ Z: ∀ ∘ (pred, s, head ∘ s)
+  pred2 => x ∈ Z: x > 10
+  ifThereIsANumberGreaterThan10 => s ⊆ Z: ∃ ∘ (pred2, s, head ∘ s)
 do
   square ∘
   allEven ∘
