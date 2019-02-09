@@ -175,13 +175,19 @@ apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =
   case (Map.lookup bname fEnv) of
     Just (btys, expr) ->
-      case (joinTysAndBinds' btys fEnv bEnv input) of
-        Just paramsEnv ->
-          Just (evalCaseExpr'
+      case (allTysExist' btys bEnv) of
+        Epsilon s -> Just (Epsilon s)
+        _ -> applyJoinTysAndBinds' btys expr fEnv bEnv input
+    _ -> Nothing
+
+applyJoinTysAndBinds' :: [BindingType] -> CaseExpression -> FunEnvMap -> BindEnvMap -> Constant -> Maybe Constant
+applyJoinTysAndBinds' btys expr fEnv bEnv input =
+  case (joinTysAndBinds' btys fEnv bEnv input) of
+    Just paramsEnv ->
+      Just (evalCaseExpr'
             expr
             fEnv
             (Map.union (Map.fromList paramsEnv) bEnv))
-        _ -> Nothing
     _ -> Nothing
 
 joinTysAndBinds' :: [BindingType] -> FunEnvMap -> BindEnvMap -> Constant -> Maybe [BindEnv]
