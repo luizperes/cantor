@@ -17,8 +17,8 @@
 #### Example
 ```Haskell
 # simulating head and tail (as if sets were lists) ...
-let head => y subset of Universe: any
-let tail => y subset of Universe: y - (head . y)
+let head => s subset of Universe: any in s
+let tail => s subset of Universe: s - (head . s)
 
 let True  = 1 = 1
 let False = ~True
@@ -51,8 +51,8 @@ do
 The code above can also be written:
 ```Haskell
 # simulating head and tail (as if sets were lists) ...
-let head => y ⊆ Universe: any
-let tail => y ⊆ Universe: y - (head . y)
+let head => s ⊆ Universe: any ∈ s
+let tail => s ⊆ Universe: s - (head ∘ s)
 
 let True  = 1 = 1
 let False = ~True

@@ -1,6 +1,18 @@
 module TypeChecker where
-  
+
+import System.Environment
+import Data.List
+import qualified Data.Map.Strict as Map
 import Grammar
+
+--
+-- lookup in map is O(logn)
+--
+type Map = Map.Map
+type FunEnv = (Identifier, ([BindingType], CaseExpression))
+type FunEnvMap = Map Identifier ([BindingType], CaseExpression)
+type BindEnv = (Identifier, Constant)
+type BindEnvMap = Map Identifier Constant
 
 isNumber' :: Constant -> Maybe Double
 isNumber' (NatLit c) = Just c
@@ -26,7 +38,7 @@ arithmType' fn (DoubleLit a) (DoubleLit b) = DoubleLit (fn a b)
  - Type rules are as described on TYPE_RULES.md file
  -}
 
-matchType' :: Type -> Relationship -> Constant -> Bool
+matchType' :: BindingName -> Relationship -> Type -> Constant -> FunEnvMap -> BindEnvMap -> Bool
 
 -- Tuple
 -- TODO:
@@ -38,5 +50,6 @@ matchType' :: Type -> Relationship -> Constant -> Bool
 -- TODO:
 
 -- Universe
-matchType' (TUniverse) (ElementOf) (_) = True
-matchType' (TUniverse) (SubsetOf) (_) = True
+matchType' _ ElementOf TUniverse _ _ _ = True
+matchType' _ SubsetOf TUniverse _ _ _= True
+matchType' _ _ _ _ _ _ = False

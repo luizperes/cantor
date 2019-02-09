@@ -7,15 +7,6 @@ import Grammar
 import Unparsing
 import TypeChecker
 
---
--- lookup in map is O(logn)
---
-type Map = Map.Map
-type FunEnv = (Identifier, ([BindingType], CaseExpression))
-type FunEnvMap = Map Identifier ([BindingType], CaseExpression)
-type BindEnv = (Identifier, Constant)
-type BindEnvMap = Map Identifier Constant
-
 exec' :: Program -> [Constant]
 exec' (Prog stmts) =
   case sepBeginStmts stmts([],[]) of
@@ -206,10 +197,11 @@ joinTysAndBinds' btys fEnv bEnv (TupleLit ts) =
         _ -> Nothing
 joinTysAndBinds' _ _ _ _ = Nothing
 
--- TODO: check types
--- TODO: implement tuples and sets
 joinTyAndBind' :: BindingType -> FunEnvMap -> BindEnvMap -> Constant -> Maybe [BindEnv]
-joinTyAndBind' (BType [bname] rel ty) _ _ c = Just [(bname, c)] -- check type
+joinTyAndBind' (BType [bname] rel ty) fEnv bEnv c =
+  case (matchType' bname rel ty c fEnv bEnv) of
+    True -> Just [(bname, c)]
+    _ -> Nothing
 joinTyAndBind' (BType tnames rel ty) fEnv bEnv (TupleLit ts) =
   case (map (\expr -> eval' expr fEnv bEnv) ts) of
     res -> Just (zipWith (\x y -> (x, y)) tnames res)
