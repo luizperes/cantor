@@ -9,7 +9,7 @@ import Grammar
 import Unparsing
 import TypeChecker
 
-exec' :: Program -> [Constant]
+exec' :: Program -> [Constant] 
 exec' (Prog stmts) =
   case sepBeginStmts stmts([],[]) of
     (dos, lets) ->
@@ -68,6 +68,7 @@ eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
     SetLit [] -> eval' (EBind bname) fEnv bEnv
     _ -> case (eval' (EConst expr) fEnv bEnv) of
       evalExpr -> case (apply' bname evalExpr fEnv bEnv) of
+        Just (Epsilon s) -> Epsilon s
         Just c -> c
         _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
 eval' (EBinOp FCall (EBind bname) expr) fEnv bEnv =
@@ -136,6 +137,13 @@ applyBinOp' op (BoolLit b1) (BoolLit b2) =
     Eq  -> BoolLit (b1 == b2)
     NEq -> BoolLit (b1 /= b2)
     And -> BoolLit (b1 && b2) -- implicit case for expr list
+applyBinOp' In AnyLit c2 =
+  case c2 of
+    SetLit s ->
+      case (s > [], s) of
+      (True, (EConst x):xs) -> x
+      _ -> Epsilon ((unparseConst' (SetLit s)) ++ " is empty")
+    _ -> Epsilon ("Can't apply any in " ++ (unparseConst' c2))
 applyBinOp' op c1@(SetLit s1) c2@(SetLit s2) =
   case op of
     Eq  -> BoolLit (s1 == s2)

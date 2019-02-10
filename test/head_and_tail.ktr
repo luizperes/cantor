@@ -1,7 +1,7 @@
 let Char = 'a'..'z'
 
 let
-  head => x in Universe: any in x
+  head => x subset of Char: any in x
   tail => y subset of Char: y - (head . y)
 do
-  tail . {1, 2, 3}
+  tail . {'a', 'b', 'c'}

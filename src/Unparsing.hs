@@ -18,6 +18,9 @@ unparseConst' (NumLit c) =
     False -> show c
 unparseConst' (CharLit c) = "'" ++ [c] ++ "'"
 unparseConst' (BoolLit c) = show c
+unparseConst' (AnyLit) = "any"
+unparseConst' (UniverseLit) = unparseType' TUniverse
+
 
 unparseList' :: [Expression] -> [String] -> String
 unparseList' [] strs = concat (intersperse ", " strs)
@@ -34,10 +37,10 @@ unparseType' (TCustom binding) = binding
 unparseType' (TBinOp op t1 t2) =
   case op of
    Union -> (unparseType' t1) ++ " ∪ " ++ (unparseType' t2)
-   Intersection -> (unparseType' t1) ++ " ∩ " ++ (unparseType' t2)
-   CartProduct -> (unparseType' t1) ++ " × " ++ (unparseType' t2)
+   Intersection -> (unparseType' t1) ++ " \\ " ++ (unparseType' t2)
+   CartProduct -> (unparseType' t1) ++ " *' " ++ (unparseType' t2)
    Difference -> (unparseType' t1) ++ " \\ " ++ (unparseType' t2)
-   Function -> (unparseType' t1) ++ " → " ++ (unparseType' t2)
+   Function -> (unparseType' t1) ++ " -> " ++ (unparseType' t2)
 
 unparseBType' :: BindingType -> String
 unparseBType' (BType binds rel ty) =
@@ -77,8 +80,8 @@ unparseBinOp' op =
     GtE -> ">="
     Lt  -> "<"
     LtE -> "<="
-    FCall -> "∘"
+    FCall -> "."
     Range -> ".."
-    In -> "∈"
-    Subset -> "⊆"
+    In -> "in"
+    Subset -> "subset of"
     And -> ","
