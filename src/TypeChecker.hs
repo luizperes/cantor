@@ -44,6 +44,8 @@ allTysExist' (x:xs) bEnv =
  - Type rules are as described on TYPE_RULES.md file
  -}
 
+cartProd xs ys = [(x,y) | x <- xs, y <- ys]
+
 matchType' :: Relationship -> Type -> Maybe (Set Constant) -> Constant -> Bool
 matchType' ElementOf TUniverse _ _ = True
 matchType' SubsetOf TUniverse _ _ = True

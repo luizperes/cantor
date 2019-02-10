@@ -1,5 +1,7 @@
 #let fact => n in Z:[ 1 x,y ] [x+1 otherwise]
 
+let Z = -128..127
+
 let fact => n in Z:
          [ 1 (n = 0) ]
          [ 1 (n = 1) ]

@@ -8,7 +8,9 @@ data Constant = Epsilon  [Char]
               | NumLit   Double
               | SetLit   [Expression]
               | TupleLit [Expression]
+              | SProdLit [(Constant, Constant)]
               | AnyLit
+              | UniverseLit
               deriving (Show, Ord, Eq)
 
 type Identifier = String
@@ -24,8 +26,7 @@ data Type = TUniverse
 data SetOp = Union
            | Intersection
            | CartProduct
-           | SymmetricDiff
-           | RelativeDiff
+           | Difference
            | Function
            deriving Show
 

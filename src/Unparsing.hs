@@ -12,7 +12,10 @@ unparseConst' :: Constant -> String
 unparseConst' (SetLit cs) = "{" ++ (unparseList' cs []) ++ "}"
 unparseConst' (TupleLit cs) = "(" ++ (unparseList' cs []) ++ ")"
 unparseConst' (Epsilon c) = c
-unparseConst' (NumLit c) = show c
+unparseConst' (NumLit c) =
+  case (ceiling c == floor c) of
+    True -> show (ceiling c)
+    False -> show c
 unparseConst' (CharLit c) = "'" ++ [c] ++ "'"
 unparseConst' (BoolLit c) = show c
 
@@ -33,8 +36,7 @@ unparseType' (TBinOp op t1 t2) =
    Union -> (unparseType' t1) ++ " ∪ " ++ (unparseType' t2)
    Intersection -> (unparseType' t1) ++ " ∩ " ++ (unparseType' t2)
    CartProduct -> (unparseType' t1) ++ " × " ++ (unparseType' t2)
-   SymmetricDiff -> (unparseType' t1) ++ " ⊖ " ++ (unparseType' t2)
-   RelativeDiff -> (unparseType' t1) ++ " \\\\ " ++ (unparseType' t2)
+   Difference -> (unparseType' t1) ++ " \\ " ++ (unparseType' t2)
    Function -> (unparseType' t1) ++ " → " ++ (unparseType' t2)
 
 unparseBType' :: BindingType -> String

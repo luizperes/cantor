@@ -216,12 +216,25 @@ joinTyAndBind' (BType tnames rel ty) fEnv bEnv (TupleLit ts) =
 joinTyAndBind' _ _ _ _ = Nothing
 
 makeSet' :: BindingType -> FunEnvMap -> BindEnvMap -> Maybe (Set Constant)
-makeSet' (BType bnames rel TUniverse) _ _ = Nothing
-makeSet' (BType bnames rel (TCustom tc)) fEnv bEnv =
+makeSet' (BType b r TUniverse) _ _ = Just (Set.singleton UniverseLit)
+makeSet' (BType b r (TGroup g)) fEnv bEnv =
+  makeSet' (BType b r (TGroup g)) fEnv bEnv
+makeSet' (BType b r (TCustom tc)) fEnv bEnv =
   case (Map.lookup tc bEnv) of
     Just v ->
       case v of
         SetLit s -> Just (Set.fromList (map (\e -> eval' e fEnv bEnv) s))
         _ -> Nothing
     _ -> Nothing
-makeSet' _ _ _ = Nothing
+makeSet' (BType b r (TBinOp op t1 t2)) fEnv bEnv =
+  case (makeSet' (BType b r t1) fEnv bEnv, makeSet' (BType b r t2) fEnv bEnv) of
+    (Just s1, Just s2) ->
+      case op of
+        Function ->
+          Just (Set.singleton (SProdLit (cartProd (Set.toList s1) (Set.toList s2))))
+        CartProduct ->
+          Just (Set.singleton (SProdLit (cartProd (Set.toList s1) (Set.toList s2))))
+        Union -> Just (Set.union s1 s2)
+        Intersection -> Just (Set.intersection s1 s2)
+        Difference -> Just (Set.difference s1 s2)
+    _ -> Nothing

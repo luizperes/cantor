@@ -1,4 +1,8 @@
-let sum  => (a, b) in Z: a + b
+let R = {-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2}
+let Z = R - {-1.5, -0.5, 0.5, 1.5} + {3, 4, 5, 6}
+let N = Z - {-2, -1, 0}
+
+let sum  => (a, b) in Z*'Z: a + b
 let sum3 => a in Z, (b, c) in Z*'Z: a + b + c
 let sum8 => a in Z, (b, c) in Z*'Z, (d, e, f) in Z*'Z*'Z: a + b + c + d + e + f
 let div  => (a, b) in R: a / b
