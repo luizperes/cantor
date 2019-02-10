@@ -5,6 +5,8 @@ import qualified Data.Map.Strict as Map
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.List
+import System.IO.Unsafe
+import System.Random
 import Grammar
 import Unparsing
 import TypeChecker
@@ -131,6 +133,9 @@ interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
     fEnv
     bEnv
 
+-- TODO: think of a better way to do it later...
+nRandom l = unsafePerformIO (getStdRandom (randomR (0, length l)))
+
 applyBinOp' :: BinaryOp -> Constant -> Constant -> Constant
 applyBinOp' op (BoolLit b1) (BoolLit b2) =
   case op of
@@ -143,6 +148,10 @@ applyBinOp' In AnyLit c2 =
       case (s > [], s) of
       (True, (EConst x):xs) -> x
       _ -> Epsilon ((unparseConst' (SetLit s)) ++ " is empty")
+    _ -> Epsilon ("Can't apply any in " ++ (unparseConst' c2))
+applyBinOp' Subset AnyLit c2 =
+  case c2 of
+    SetLit s -> SetLit (take (nRandom s) s)
     _ -> Epsilon ("Can't apply any in " ++ (unparseConst' c2))
 applyBinOp' op c1@(SetLit s1) c2@(SetLit s2) =
   case op of

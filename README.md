@@ -3,6 +3,7 @@
 
 #### Dependencies
   - `parsec`: Install with the command: `cabal install parsec`
+  - `random`: Install with the command: `cabal install random`
 
 #### How to install and run
   - `cabal install`
