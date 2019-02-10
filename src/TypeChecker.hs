@@ -17,25 +17,9 @@ type FunEnvMap = Map Identifier ([BindingType], CaseExpression)
 type BindEnv = (Identifier, Constant)
 type BindEnvMap = Map Identifier Constant
 
-isNumber' :: Constant -> Maybe Double
-isNumber' (NatLit c) = Just c
-isNumber' (IntLit c) = Just c
-isNumber' (DoubleLit c) = Just c
-isNumber' _ = Nothing
-
 isChar' :: Constant -> Maybe Char
 isChar' (CharLit c) = Just c
 isChar' _ = Nothing
-
-arithmType' fn (NatLit a) (NatLit b) = NatLit (fn a b)
-arithmType' fn (IntLit a) (IntLit b) = IntLit (fn a b)
-arithmType' fn (IntLit a) (NatLit b) = IntLit (fn a b)
-arithmType' fn (NatLit a) (IntLit b) = IntLit (fn a b)
-arithmType' fn (DoubleLit a) (NatLit b) = DoubleLit (fn a b)
-arithmType' fn (NatLit a) (DoubleLit b) = DoubleLit (fn a b)
-arithmType' fn (DoubleLit a) (IntLit b) = DoubleLit (fn a b)
-arithmType' fn (IntLit a) (DoubleLit b) = DoubleLit (fn a b)
-arithmType' fn (DoubleLit a) (DoubleLit b) = DoubleLit (fn a b)
 
 allTysExist' :: [BindingType] -> BindEnvMap -> Constant
 allTysExist' [] _ = BoolLit True
@@ -64,8 +48,8 @@ matchType' :: Relationship -> Type -> Maybe (Set Constant) -> Constant -> Bool
 matchType' ElementOf TUniverse _ _ = True
 matchType' SubsetOf TUniverse _ _ = True
 matchType' ElementOf (TCustom ty) (Just s) c =
-  case (isNumber' c) of
-    Just n -> Set.member (DoubleLit n) s
+  case c of
+    NumLit n -> Set.member (NumLit n) s
     _ -> Set.member c s
 matchType' _ _ _ _ = False
 -- Tuple

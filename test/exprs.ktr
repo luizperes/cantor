@@ -1,3 +1,5 @@
+let Z = {-2, -1, 0, 1, 2}
+
 let s = {1, 2, 3} # define new set
 let newS => s in Universe:s # returns anything, s was redifined 
 let onePlusOne = 1 + 1 # return 2 as a constant

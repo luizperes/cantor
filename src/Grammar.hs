@@ -2,14 +2,12 @@ module Grammar where
 
 import System.Environment
 
-data Constant = Epsilon   [Char]
-              | BoolLit   Bool
-              | CharLit   Char
-              | DoubleLit Double
-              | IntLit    Double
-              | NatLit    Double
-              | SetLit    [Expression]
-              | TupleLit  [Expression]
+data Constant = Epsilon  [Char]
+              | BoolLit  Bool
+              | CharLit  Char
+              | NumLit   Double
+              | SetLit   [Expression]
+              | TupleLit [Expression]
               | AnyLit
               deriving (Show, Ord, Eq)
 

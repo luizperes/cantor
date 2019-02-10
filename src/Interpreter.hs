@@ -60,8 +60,8 @@ eval' (EUnOp Negation expr) fEnv bEnv =
     _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
 eval' (EUnOp Negative expr) fEnv bEnv =
   case (eval' expr fEnv bEnv) of
-    n -> case isNumber' n of
-      Just _ -> arithmType' (*) (IntLit (-1)) n
+    n -> case n of
+      NumLit v -> NumLit ((*) (-1) v)
       _ -> Epsilon ("Can't eval " ++ (unparseExpr' expr))
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
   case expr of
@@ -137,8 +137,8 @@ applyBinOp' op (BoolLit b1) (BoolLit b2) =
     NEq -> BoolLit (b1 /= b2)
     And -> BoolLit (b1 && b2) -- implicit case for expr list
 applyBinOp' op c1 c2 =
-  case (isNumber' c1, isNumber' c2) of
-    (Just b1, Just b2) ->
+  case (c1, c2) of
+    (NumLit b1, NumLit b2) ->
       case op of
         Eq  -> BoolLit (b1 == b2)
         NEq -> BoolLit (b1 /= b2)
@@ -146,16 +146,16 @@ applyBinOp' op c1 c2 =
         GtE -> BoolLit (b1 >= b2)
         Lt  -> BoolLit (b1 <  b2)
         LtE -> BoolLit (b1 <= b2)
-        Add -> arithmType' (+) c1 c2
-        Sub -> arithmType' (-) c1 c2
-        Mul -> arithmType' (*) c1 c2
-        Div -> DoubleLit ((/) b1 b2)
-        Mod -> case (c1, c2) of
-          (DoubleLit _, _) -> Epsilon ("Can't apply mod to doubles!")
-          (_, DoubleLit _) -> Epsilon ("Can't apply mod to doubles!")
-          _ -> IntLit (fromIntegral ((mod) (ceiling b1) (ceiling b2)))
-        Exp -> DoubleLit ((**) b1 b2)
-        Range -> SetLit (map (\x -> EConst (DoubleLit x)) [b1..b2])
+        Add -> NumLit ((+) b1 b2)
+        Sub -> NumLit ((-) b1 b2)
+        Mul -> NumLit ((*) b1 b2)
+        Div -> NumLit ((/) b1 b2)
+        Mod -> case (ceiling(b1) == floor(b1), ceiling(b2) == floor(b2)) of
+          (False, _) -> Epsilon ("Can't apply mod to doubles!")
+          (_, False) -> Epsilon ("Can't apply mod to doubles!")
+          _ -> NumLit (fromIntegral ((mod) (ceiling b1) (ceiling b2)))
+        Exp -> NumLit ((**) b1 b2)
+        Range -> SetLit (map (\x -> EConst (NumLit x)) [b1..b2])
         _ ->
           Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
           (unparseConst' c1) ++ " and " ++ (unparseConst' c2))

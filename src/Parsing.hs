@@ -137,13 +137,13 @@ min1Expr' = do
 doubleLit' :: Parser Constant
 doubleLit' = do
   f <- float
-  return $ DoubleLit f
+  return $ NumLit f
 
 naturalLit' :: Parser Constant
-naturalLit' = (natural >>= (\n -> return $ NatLit (fromIntegral n)))
+naturalLit' = (natural >>= (\n -> return $ NumLit (fromIntegral n)))
 
 intLit' :: Parser Constant
-intLit' = (integer >>= (\i -> return $ IntLit (fromIntegral i)))
+intLit' = (integer >>= (\i -> return $ NumLit (fromIntegral i)))
 
 charFromEscape :: Char -> Char
 charFromEscape '0' = '\0'
