@@ -136,6 +136,26 @@ applyBinOp' op (BoolLit b1) (BoolLit b2) =
     Eq  -> BoolLit (b1 == b2)
     NEq -> BoolLit (b1 /= b2)
     And -> BoolLit (b1 && b2) -- implicit case for expr list
+applyBinOp' op c1@(SetLit s1) c2@(SetLit s2) =
+  case op of
+    Eq  -> BoolLit (s1 == s2)
+    NEq -> BoolLit (s1 /= s2)
+    Gt  -> BoolLit (s1 >  s2)
+    GtE -> BoolLit (s1 >= s2)
+    Lt  -> BoolLit (s1 <  s2)
+    LtE -> BoolLit (s1 <= s2)
+    Add -> SetLit (Set.toList (Set.union (Set.fromList s1) (Set.fromList s2)))
+    Sub -> SetLit (Set.toList (Set.difference (Set.fromList s1) (Set.fromList s2)))
+    _ -> Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
+         (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
+applyBinOp' op (SetLit s1) c2 = applyBinOp' op (SetLit s1) (SetLit [(EConst c2)])
+applyBinOp' op c1 (SetLit s2) = applyBinOp' op (SetLit [(EConst c1)]) (SetLit s2)
+applyBinOp' op c1@(TupleLit t1) c2@(TupleLit t2) =
+  case op of
+    Eq  -> BoolLit (t1 == t2)
+    NEq -> BoolLit (t1 /= t2)
+    _ -> Epsilon("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
+         (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
 applyBinOp' op c1 c2 =
   case (c1, c2) of
     (NumLit b1, NumLit b2) ->
@@ -213,7 +233,6 @@ joinTyAndBind' (BType [bname] rel ty) fEnv bEnv c =
 joinTyAndBind' (BType tnames rel ty) fEnv bEnv (TupleLit ts) =
   case (map (\expr -> eval' expr fEnv bEnv) ts) of
     res -> Just (zipWith (\x y -> (x, y)) tnames res)
-joinTyAndBind' _ _ _ _ = Nothing
 
 makeSet' :: BindingType -> FunEnvMap -> BindEnvMap -> Maybe (Set Constant)
 makeSet' (BType b r TUniverse) _ _ = Just (Set.singleton UniverseLit)
