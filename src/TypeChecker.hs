@@ -54,11 +54,3 @@ matchType' ElementOf (TCustom ty) (Just s) c =
     NumLit n -> Set.member (NumLit n) s
     _ -> Set.member c s
 matchType' _ _ _ _ = False
--- Tuple
--- TODO:
-
--- List
--- TODO:
-
--- Custom
--- TODO:

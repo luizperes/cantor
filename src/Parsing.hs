@@ -244,9 +244,9 @@ operators' = [ [prefix' $ (char '~'       >> return (EUnOp  Negation))     ]
              , [Infix   (reservedOp "*"   >> return (EBinOp Mul)) AssocLeft,
                 Infix   (reservedOp "%"   >> return (EBinOp Mod)) AssocLeft,
                 Infix   (reservedOp "/"   >> return (EBinOp Div)) AssocLeft]
+             , [Infix   (reservedOp ".."  >> return (EBinOp Range)) AssocNone]
              , [Infix   (reservedOp "+"   >> return (EBinOp Add)) AssocLeft,
                 Infix   (reservedOp "-"   >> return (EBinOp Sub)) AssocLeft]
-             , [Infix   (reservedOp ".."  >> return (EBinOp Range)) AssocNone]
              , [Infix   (reservedOp ">"   >> return (EBinOp Gt )) AssocNone,
                 Infix   (reservedOp ">="  >> return (EBinOp GtE)) AssocNone,
                 Infix   (reservedOp "<"   >> return (EBinOp Lt )) AssocNone,
