@@ -152,7 +152,7 @@ applyBinOp' In AnyLit c2 =
 applyBinOp' Subset AnyLit c2 =
   case c2 of
     SetLit s -> SetLit (take (nRandom s) s)
-    _ -> Epsilon ("Can't apply any in " ++ (unparseConst' c2))
+    _ -> Epsilon ("Can't apply any subset of " ++ (unparseConst' c2))
 applyBinOp' op c1@(SetLit s1) c2@(SetLit s2) =
   case op of
     Eq  -> BoolLit (s1 == s2)
@@ -196,19 +196,17 @@ applyBinOp' op c1 c2 =
         _ ->
           Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
           (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
-    _ ->
-      case (isChar' c1, isChar' c2) of
-        (Just cc1, Just cc2) ->
-          case op of
-            Eq  -> BoolLit (cc1 == cc2)
-            NEq -> BoolLit (cc1 /= cc2)
-            Range -> SetLit (map (\x -> EConst (CharLit x)) [cc1..cc2])
-            _ ->
-              Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
-              (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
+    (CharLit cc1, CharLit cc2) ->
+      case op of
+        Eq  -> BoolLit (cc1 == cc2)
+        NEq -> BoolLit (cc1 /= cc2)
+        Range -> SetLit (map (\x -> EConst (CharLit x)) [cc1..cc2])
         _ ->
           Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
           (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
+    _ ->
+      Epsilon ("Can't apply (" ++ (unparseBinOp' op) ++ ") to " ++
+      (unparseConst' c1) ++ " and " ++ (unparseConst' c2))
 
 apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =
@@ -217,7 +215,8 @@ apply' bname input fEnv bEnv =
       case (allTysExist' btys bEnv) of
         Epsilon s -> Just (Epsilon s)
         _ -> applyJoinTysAndBinds' btys expr fEnv bEnv input
-    _ -> Nothing
+    _ ->
+      Just (Epsilon (bname ++ " is not a valid binding name"))
 
 applyJoinTysAndBinds' :: [BindingType] -> CaseExpression -> FunEnvMap -> BindEnvMap -> Constant -> Maybe Constant
 applyJoinTysAndBinds' btys expr fEnv bEnv input =
@@ -257,10 +256,8 @@ makeSet' (BType b r (TGroup g)) fEnv bEnv =
   makeSet' (BType b r (TGroup g)) fEnv bEnv
 makeSet' (BType b r (TCustom tc)) fEnv bEnv =
   case (Map.lookup tc bEnv) of
-    Just v ->
-      case v of
-        SetLit s -> Just (Set.fromList (map (\e -> eval' e fEnv bEnv) s))
-        _ -> Nothing
+    (Just (SetLit s)) ->
+      Just (Set.fromList (map (\e -> eval' e fEnv bEnv) s))
     _ -> Nothing
 makeSet' (BType b r (TBinOp op t1 t2)) fEnv bEnv =
   case (makeSet' (BType b r t1) fEnv bEnv, makeSet' (BType b r t2) fEnv bEnv) of

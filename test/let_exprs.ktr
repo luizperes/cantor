@@ -2,7 +2,6 @@ let pi = 3.1415
 let rangeTuple1To5 = (1..5)
 let rangeChars = {'a'..'z'}
 let isChar => s in rangeChars: s = s #literal bool has not been implemented
-let anything => x in Z: x, (isChar . 'z')
 
 do isChar . '\n'
 do isChar . 'c'

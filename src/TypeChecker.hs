@@ -17,10 +17,6 @@ type FunEnvMap = Map Identifier ([BindingType], CaseExpression)
 type BindEnv = (Identifier, Constant)
 type BindEnvMap = Map Identifier Constant
 
-isChar' :: Constant -> Maybe Char
-isChar' (CharLit c) = Just c
-isChar' _ = Nothing
-
 allTysExist' :: [BindingType] -> BindEnvMap -> Constant
 allTysExist' [] _ = BoolLit True
 allTysExist' [(BType _ _ TUniverse)] _ = BoolLit True
@@ -56,9 +52,13 @@ matchType' :: Relationship -> Type -> Maybe (Set Constant) -> Constant -> Bool
 matchType' ElementOf TUniverse _ _ = True
 matchType' SubsetOf TUniverse _ _ = True
 matchType' ElementOf (TCustom ty) (Just s) c =
-  case c of
-    NumLit n -> Set.member (NumLit n) s
+  case (Set.toList s) of
+    [(SetLit s')] ->
+      case (extractConsts' s' []) of
+        Just consts -> matchType' ElementOf (TCustom ty) (Just (Set.fromList consts)) c
+        _ -> False
     _ -> Set.member c s
+-- TODO check if tuples are needed
 matchType' SubsetOf (TCustom ty) (Just s) c =
   case c of
     SetLit sub_s ->
