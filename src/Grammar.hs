@@ -8,9 +8,9 @@ data Constant = Epsilon  [Char]
               | NumLit   Double
               | SetLit   [Expression]
               | TupleLit [Expression]
-              | SProdLit [(Constant, Constant)]
               | AnyLit
-              | UniverseLit
+              | SProdLit [(Constant, Constant)] -- implicit
+              | UniverseLit -- implicit
               deriving (Show, Ord, Eq)
 
 type Identifier = String
