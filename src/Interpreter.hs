@@ -2,6 +2,8 @@ module Interpreter where
 
 import System.Environment
 import qualified Data.Map.Strict as Map
+import Data.Set (Set)
+import qualified Data.Set as Set
 import Data.List
 import Grammar
 import Unparsing
@@ -201,14 +203,25 @@ joinTysAndBinds' btys fEnv bEnv (TupleLit ts) =
       case sequence (zipWith (\bty c -> joinTyAndBind' bty fEnv bEnv c) btys res) of
         Just lst -> Just (concat lst)
         _ -> Nothing
-joinTysAndBinds' _ _ _ _ = Nothing
+joinTysAndBinds' btys fEnv bEnv c = Nothing
 
 joinTyAndBind' :: BindingType -> FunEnvMap -> BindEnvMap -> Constant -> Maybe [BindEnv]
 joinTyAndBind' (BType [bname] rel ty) fEnv bEnv c =
-  case (matchType' bname rel ty c fEnv bEnv) of
+  case (matchType' rel ty (makeSet' (BType [bname] rel ty) fEnv bEnv) c) of
     True -> Just [(bname, c)]
     _ -> Nothing
 joinTyAndBind' (BType tnames rel ty) fEnv bEnv (TupleLit ts) =
   case (map (\expr -> eval' expr fEnv bEnv) ts) of
     res -> Just (zipWith (\x y -> (x, y)) tnames res)
 joinTyAndBind' _ _ _ _ = Nothing
+
+makeSet' :: BindingType -> FunEnvMap -> BindEnvMap -> Maybe (Set Constant)
+makeSet' (BType bnames rel TUniverse) _ _ = Nothing
+makeSet' (BType bnames rel (TCustom tc)) fEnv bEnv =
+  case (Map.lookup tc bEnv) of
+    Just v ->
+      case v of
+        SetLit s -> Just (Set.fromList (map (\e -> eval' e fEnv bEnv) s))
+        _ -> Nothing
+    _ -> Nothing
+makeSet' _ _ _ = Nothing

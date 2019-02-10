@@ -2,7 +2,9 @@ module TypeChecker where
 
 import System.Environment
 import Data.List
+import Data.Set (Set)
 import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
 import Grammar
 import Unparsing
 
@@ -58,8 +60,14 @@ allTysExist' (x:xs) bEnv =
  - Type rules are as described on TYPE_RULES.md file
  -}
 
-matchType' :: BindingName -> Relationship -> Type -> Constant -> FunEnvMap -> BindEnvMap -> Bool
-
+matchType' :: Relationship -> Type -> Maybe (Set Constant) -> Constant -> Bool
+matchType' ElementOf TUniverse _ _ = True
+matchType' SubsetOf TUniverse _ _ = True
+matchType' ElementOf (TCustom ty) (Just s) c =
+  case (isNumber' c) of
+    Just n -> Set.member (DoubleLit n) s
+    _ -> Set.member c s
+matchType' _ _ _ _ = False
 -- Tuple
 -- TODO:
 
@@ -68,8 +76,3 @@ matchType' :: BindingName -> Relationship -> Type -> Constant -> FunEnvMap -> Bi
 
 -- Custom
 -- TODO:
-
--- Universe
-matchType' _ ElementOf TUniverse _ _ _ = True
-matchType' _ SubsetOf TUniverse _ _ _= True
-matchType' _ _ _ _ _ _ = False

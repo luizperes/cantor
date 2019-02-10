@@ -11,7 +11,7 @@ data Constant = Epsilon   [Char]
               | SetLit    [Expression]
               | TupleLit  [Expression]
               | AnyLit
-              deriving Show
+              deriving (Show, Ord, Eq)
 
 type Identifier = String
 
@@ -50,11 +50,11 @@ data Expression = EBinOp BinaryOp Expression Expression
                 | EUnOp UnaryOp Expression
                 | EConst Constant
                 | EBind BindingName
-                deriving Show
+                deriving (Show, Ord, Eq)
 
 data UnaryOp = Negation
              | Negative
-             deriving Show
+             deriving (Show, Ord, Eq)
 
 data BinaryOp = Add
               | Sub
@@ -73,7 +73,7 @@ data BinaryOp = Add
               | In
               | Subset
               | And -- implicit
-              deriving Show
+              deriving (Show, Ord, Eq)
 
 data Binding = BBind BindingName PatternStmt CaseExpression
              | BExpr BindingName Expression
