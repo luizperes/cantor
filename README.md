@@ -17,6 +17,8 @@
 
 #### Example
 ```Haskell
+let Z = -128..127
+
 # simulating head and tail (as if sets were lists) ...
 let head => s subset of Universe: any in s
 let tail => s subset of Universe: s - (head . s)
@@ -27,7 +29,7 @@ let False = ~True
 # ∀xP(x)
 let forall => P in Universe, X subset of Universe, x in X:
            [  True                                              X = {}  ]
-           [  True          P . x, forall . (P, X - x, head . (X - x))  ]
+           [  forall . (P, X - x, head . (X - x))                P . x  ]
            [  False                                          otherwise  ]
 
 # ∃xP(x)
@@ -36,14 +38,19 @@ let exists => P in Universe, X subset of Universe, x in X:
            [  True                                         P . x   ]
            [  exists . (P, X - x, head . (X - x))       otherwise  ]
 
+let map => f in Universe -> Universe, s subset of Universe, x in s, acc subset of Universe:
+        [  acc                                                      s = {}  ]
+        [  (map . (f, s - x, head . (s - x), (f . x) + acc))     otherwise  ]
+
 let
   square => x in Z: x ^ 2
+  allSquared => s subset of Z: map . (square, s, head . s, {})
   pred => x in Z: (x % 2) = 0
-  allEven => s subset of Z: forall . (pred, s, s - (head . s))
+  allEven => s subset of Z: s, forall . (pred, s, head . s)
   pred2 => x in Z: x > 10
-  ifThereIsANumberGreaterThan10 => s subset of Z: exists . (pred2, s, s - (head . s))
+  ifThereIsANumberGreaterThan10 => s subset of Z: s, exists . (pred2, s, head . s)
 do
-  square .
+  allSquared .
   allEven .
   ifThereIsANumberGreaterThan10 .
   {2, 4, 6, 8, 10, 12}
@@ -51,6 +58,8 @@ do
 
 The code above can also be written:
 ```Haskell
+let Z = -128..127
+
 # simulating head and tail (as if sets were lists) ...
 let head => s ⊆ Universe: any ∈ s
 let tail => s ⊆ Universe: s - (head ∘ s)
@@ -61,23 +70,28 @@ let False = ~True
 # ∀xP(x)
 let ∀ => P ∈ Universe, X ⊆ Universe, x ∈ X:
       [  True                                              X = {}  ]
-      [  True               P ∘ x, ∀ ∘ (P, X - x, head ∘ (X - x))  ]
+      [  ∀ . (P, X - x, head . (X - x))                     P . x  ]
       [  False                                          otherwise  ]
 
 # ∃xP(x)
 let ∃ => P ∈ Universe, X ⊆ Universe, x ∈ X:
       [  False                                        X = {}  ]
-      [  True                                         P ∘ x   ]
-      [  ∃ ∘ (P, X - x, head ∘ (X - x))            otherwise  ]
+      [  True                                         P . x   ]
+      [  ∃ . (P, X - x, head . (X - x))            otherwise  ]
+
+let map => f ∈ Universe → Universe, s ⊆ Universe, x ∈ s, acc ⊆ Universe:
+        [  acc                                                    s = {}  ]
+        [  (map . (f, s - x, head . (s - x), (f∘x) + acc))     otherwise  ]
 
 let
-  square  => s ⊆ Z: x ^ 2
+  square => x ∈ Z: x ^ 2
+  allSquared => s ⊆ Z: map . (square, s, head . s, {})
   pred => x ∈ Z: (x % 2) = 0
-  allEven => s ⊆ Z: ∀ ∘ (pred, s, head ∘ s)
+  allEven => s ⊆ Z: s, ∀ . (pred, s, head . s)
   pred2 => x ∈ Z: x > 10
-  ifThereIsANumberGreaterThan10 => s ⊆ Z: ∃ ∘ (pred2, s, head ∘ s)
+  ifThereIsANumberGreaterThan10 => s ⊆ Z: s, ∃ . (pred2, s, head . s)
 do
-  square ∘
+  allSquared ∘
   allEven ∘
   ifThereIsANumberGreaterThan10 ∘
   {2, 4, 6, 8, 10, 12}

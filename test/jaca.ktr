@@ -1,0 +1,37 @@
+let Z = -128..127
+
+# simulating head and tail (as if sets were lists) ...
+let head => s subset of Universe: any in s
+let tail => s subset of Universe: s - (head . s)
+
+let True  = 1 = 1
+let False = ~True
+
+# ∀xP(x)
+let forall => P in Universe, X subset of Universe, x in X:
+           [  True                                              X = {}  ]
+           [  forall . (P, X - x, head . (X - x))                P . x  ]
+           [  False                                          otherwise  ]
+
+# ∃xP(x)
+let exists => P in Universe, X subset of Universe, x in X:
+           [  False                                        X = {}  ]
+           [  True                                         P . x   ]
+           [  exists . (P, X - x, head . (X - x))       otherwise  ]
+
+let map => f ∈ Universe → Universe, s ⊆ Universe, x ∈ s, acc ⊆ Universe:
+        [  acc                                                    s = {}  ]
+        [  (map . (f, s - x, head . (s - x), (f∘x) + acc))     otherwise  ]
+
+let
+  square => x in Z: x ^ 2
+  allSquared => s subset of Z: map . (square, s, head . s, {})
+  pred => x in Z: (x % 2) = 0
+  allEven => s subset of Z: s, forall . (pred, s, head . s)
+  pred2 => x in Z: x > 10
+  ifThereIsANumberGreaterThan10 => s subset of Z: s, exists . (pred2, s, head . s)
+do
+  allSquared .
+  allEven .
+  ifThereIsANumberGreaterThan10 .
+  {2, 4, 6, 8, 10, 12}
