@@ -1,0 +1,9 @@
+let church => n in Universe, acc subset of Universe:
+           [  acc            n < 1  ]
+           [  church . (n-1, acc + {acc}) otherwise  ]
+
+do church . (5, '∅')
+
+# lam f . x . x
+# lam f . x . (f x)
+# lam f . x . (f (f x))
