@@ -31,6 +31,8 @@ allTysExist' [(BType _ _ (TBinOp _ t1 t2))] bEnv =
     (BoolLit True, BoolLit True) -> BoolLit True
     (Epsilon s, BoolLit True) -> Epsilon s
     (BoolLit True, Epsilon s) -> Epsilon s
+    -- TODO: the line above is wrong, fix later
+    _ -> BoolLit True
 allTysExist' (x:xs) bEnv =
   case (allTysExist' [x] bEnv) of
     BoolLit True -> allTysExist' xs bEnv
@@ -52,6 +54,7 @@ matchType' :: Relationship -> Type -> Maybe (Set Constant) -> Constant -> Bool
 matchType' ElementOf TUniverse _ _ = True
 matchType' SubsetOf TUniverse _ _ = True
 matchType' _ _ _ _ = True
+-- TODO: implement type matching correctly
 {-
 matchType' ElementOf (TCustom ty) (Just s) c =
   case (Set.toList s) of

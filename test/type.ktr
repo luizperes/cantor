@@ -1,6 +1,6 @@
 # Main
 
-let head => y subset of Universe: any
+let head => y subset of Universe: any in y
 let tail => y subset of Universe: y - (head . y)
 
 let True  = 1 = 1
@@ -37,7 +37,6 @@ let set2 = {2, 3, 4}
 let set3 => s ⊆ set1 ∪ set2: s
 let set4 => s ⊆ set1 \ set2: s
 let set5 => s ⊆ set1 × set2: s
-let set6 => s ⊆ set1 ⊖ set2: s
 let set7 => s ⊆ set1 → set2: s
 let set8 => s ⊆ set1 ∩ set2 union set3: s
 
@@ -55,4 +54,6 @@ let yetYetAnotherTry => (x, y, z) ∈ Point × G: (x, y, z)
 
 let yetYetAnotherTry => (x, y, z) ∈ Point × Z: (x, y, z)
 
-do map ∘ (square, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+do map ∘ (square, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1, {})
+
+do isNatural . 4

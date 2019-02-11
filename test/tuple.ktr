@@ -7,11 +7,12 @@ let TyTuple => ty ∈ Type1, x ∈ Type2: (ty, x)
 let x => y ∈ Universe: 1
 
 let Bre => p ∈ Universe:
-        [  x      (Point . (1, 2)) ]
-        [  y             otherwise ]
+        [  1=1        (Point . (1, 2)) = p ]
+        [  1~1                  otherwise  ]
 
 let IntTuple => x ∈ Universe, y ∈ Universe:
              [ (x, y)     x ∈ Z, y ∈ Z ]
              [ {}            otherwise ]
 
 do Bre . {(1, 5)}
+do Bre . {(1, 2)}
