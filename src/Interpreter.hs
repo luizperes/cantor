@@ -157,6 +157,10 @@ applyBinOp' Subset AnyLit c2 =
   case c2 of
     SetLit s -> SetLit (take (nRandom s) s)
     _ -> Epsilon ("Can't apply any subset of " ++ (unparseConst' c2))
+applyBinOp' In c (SetLit s) =
+  BoolLit (Set.member (EConst c) (Set.fromList s))
+applyBinOp' Subset (SetLit s1) (SetLit s2) =
+  BoolLit (Set.isSubsetOf (Set.fromList s1) (Set.fromList s2))
 applyBinOp' op c1@(SetLit s1) c2@(SetLit s2) =
   case op of
     Eq  -> BoolLit (s1 == s2)

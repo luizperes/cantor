@@ -1,5 +1,8 @@
 # Main
 
+let N = 1..127
+let Z = N + -128..0
+
 let head => y subset of Universe: any in y
 let tail => y subset of Universe: y - (head . y)
 
@@ -30,6 +33,10 @@ let isNatural => x ∈ Universe:
               [ True       (x ∈ Z), x >= 0 ]
               [ False            otherwise ]
 
+let isSubsetOfN => x subset of Universe:
+                [ True            (x subset of N)  ]
+                [ False                 otherwise  ]
+
 # Set Operations
 
 let set1 = {1, 2, 3}
@@ -57,3 +64,7 @@ let yetYetAnotherTry => (x, y, z) ∈ Point × Z: (x, y, z)
 do map ∘ (square, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1, {})
 
 do isNatural . 4
+
+do isSubsetOfN . {1, 2, 3}
+
+do isSubsetOfN . {0, 1, 2}
