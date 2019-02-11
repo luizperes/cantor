@@ -1,7 +1,9 @@
+let Z = -128..127
+
 let x = {1, 2>2, 'C'}
 
 let y => x in Z: 1+1
 
 do x . {}
 
-do y . {}
+do y . 0

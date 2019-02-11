@@ -212,11 +212,20 @@ apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =
   case (Map.lookup bname fEnv) of
     Just (btys, expr) ->
-      case (allTysExist' btys bEnv) of
+      case (allTysExist' btys (makeInnerTys' btys bEnv)) of
         Epsilon s -> Just (Epsilon s)
         _ -> applyJoinTysAndBinds' btys expr fEnv bEnv input
     _ ->
       Just (Epsilon (bname ++ " is not a valid binding name"))
+
+
+makeInnerTys' :: [BindingType] -> BindEnvMap -> BindEnvMap
+makeInnerTys' [] bEnv = bEnv
+makeInnerTys' ((BType bnames rel  (TCustom id)):xs) bEnv =
+  case (allTysExist' [(BType bnames rel (TCustom id))] bEnv) of
+    BoolLit True -> bEnv
+    _ -> makeInnerTys' xs (Map.union (Map.fromList [(id, Epsilon "Stub")]) bEnv)
+makeInnerTys' (x:xs) bEnv = makeInnerTys' xs bEnv
 
 applyJoinTysAndBinds' :: [BindingType] -> CaseExpression -> FunEnvMap -> BindEnvMap -> Constant -> Maybe Constant
 applyJoinTysAndBinds' btys expr fEnv bEnv input =
