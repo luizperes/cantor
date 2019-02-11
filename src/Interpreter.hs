@@ -52,10 +52,13 @@ interpret' doStmts (fEnv, bEnv) =
     doStmts)
 
 eval' :: Expression -> FunEnvMap -> BindEnvMap -> Constant
-eval' (EBind v) _ bEnv =
+eval' (EBind v) fEnv bEnv =
   case Map.lookup v bEnv of
     Just value -> value
-    _ -> Epsilon (v ++ " is not a valid binding name")
+    _ ->
+      case Map.lookup v fEnv of
+        Just _ -> BAliasLit v
+        _ -> Epsilon (v ++ " is not a valid binding name")
 eval' (EUnOp Negation expr) fEnv bEnv =
   case eval' expr fEnv bEnv of
     BoolLit b -> BoolLit (not b)
@@ -68,11 +71,12 @@ eval' (EUnOp Negative expr) fEnv bEnv =
 eval' (EBinOp FCall (EBind bname) (EConst expr)) fEnv bEnv =
   case expr of
     SetLit [] -> eval' (EBind bname) fEnv bEnv
-    _ -> case (eval' (EConst expr) fEnv bEnv) of
-      evalExpr -> case (apply' bname evalExpr fEnv bEnv) of
-        Just (Epsilon s) -> Epsilon s
-        Just c -> c
-        _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
+    _ ->
+      case (eval' (EConst expr) fEnv bEnv) of
+        evalExpr -> case (apply' bname evalExpr fEnv bEnv) of
+          Just (Epsilon s) -> Epsilon s 
+          Just c -> c
+          _ -> Epsilon ("Can't apply " ++ bname ++ " to " ++ (unparseExpr' (EConst expr)))
 eval' (EBinOp FCall (EBind bname) expr) fEnv bEnv =
   eval'
     (EBinOp FCall (EBind bname) (EConst (eval' expr fEnv bEnv)))
@@ -216,8 +220,9 @@ apply' bname input fEnv bEnv =
         Epsilon s -> Just (Epsilon s)
         _ -> applyJoinTysAndBinds' btys expr fEnv bEnv input
     _ ->
-      Just (Epsilon (bname ++ " is not a valid binding name"))
-
+      case (eval' (EBind bname) fEnv bEnv) of
+        BAliasLit bname' -> apply' bname' input fEnv bEnv
+        _ -> Just (Epsilon (bname ++ " is not a valid binding name"))
 
 makeInnerTys' :: [BindingType] -> BindEnvMap -> BindEnvMap
 makeInnerTys' [] bEnv = bEnv

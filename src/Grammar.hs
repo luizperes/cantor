@@ -9,6 +9,7 @@ data Constant = Epsilon  [Char]
               | SetLit   [Expression]
               | TupleLit [Expression]
               | AnyLit
+              | BAliasLit BindingName
               | SProdLit [(Constant, Constant)] -- implicit
               | UniverseLit -- implicit
               deriving (Show, Ord, Eq)

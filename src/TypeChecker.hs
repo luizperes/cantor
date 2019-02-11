@@ -51,6 +51,8 @@ extractConsts' _ _ = Nothing
 matchType' :: Relationship -> Type -> Maybe (Set Constant) -> Constant -> Bool
 matchType' ElementOf TUniverse _ _ = True
 matchType' SubsetOf TUniverse _ _ = True
+matchType' _ _ _ _ = True
+{-
 matchType' ElementOf (TCustom ty) (Just s) c =
   case (Set.toList s) of
     [(SetLit s')] ->
@@ -66,4 +68,5 @@ matchType' SubsetOf (TCustom ty) (Just s) c =
         Just consts -> Set.isSubsetOf (Set.fromList consts) s
         _ -> False
     _ -> False
-matchType' _ _ _ _ = False
+matchType' _ _ _ _ = True
+-}

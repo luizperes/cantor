@@ -1,16 +1,16 @@
-let Z = -128..127
+let Z = -15..15
 
 # simulating head and tail (as if sets were lists) ...
-let head => y subset of Universe: any in y
+let head => y1 subset of Universe: any in y1
 let tail => y subset of Universe: y - (head . y)
 
 let True  = 1 = 1
 let False = ~True
 
 # ∀xP(x)
-let forall => P in Universe, X subset of Universe, x in X:
-           [  True                                              X = {}  ]
-           [  True          P . x, forall . (P, X - x, head . (X - x))  ]
+let forall => Q in Universe, Z subset of Universe, z in Z:
+           [  True                                              Z = {}  ]
+           [  forall . (Q, Z - z, head . (Z - z))                Q . z  ]
            [  False                                          otherwise  ]
 
 # ∃xP(x)
@@ -19,14 +19,19 @@ let exists => P in Universe, X subset of Universe, x in X:
            [  True                                         P . x   ]
            [  exists . (P, X - x, head . (X - x))       otherwise  ]
 
+let foreach => R in Universe, W subset of Universe, w in W, acc subset of Universe:
+            [ acc                                                    W = {} ]
+            [ foreach . (R, W - w, head . (W - w), acc + (R . w)) otherwise ]
+
 let
-  square => x in Z: x ^ 2
-  pred => x in Z: (x % 2) = 0
-  allEven => s subset of Z: forall . (pred, s, s - (head . s))
-  pred2 => x in Z: x > 10
-  ifThereIsANumberGreaterThan10 => s subset of Z: exists . (pred2, s - (head . s), head . s)
+  square => x1 in Z: x1 ^ 2
+  allSquared => m subset of Z: foreach . (square, m, (head . m), {})
+  pred => x2 in Z: True, (x2 % 2) = 0
+  allEven => w3 subset of Z: w3, forall . (pred, w3, head . w3)
+  pred2 => x4 in Z: x4 > 10
+  ifThereIsANumberGreaterThan10 => s subset of Z: s, exists . (pred2, s, head . s)
 do
-  square .
+  allSquared .
   allEven .
   ifThereIsANumberGreaterThan10 .
   {2, 4, 6, 8, 10, 12}

@@ -1,0 +1,9 @@
+let head => y1 subset of Universe: any in y1
+
+let map => f ∈ Universe → Universe, s ⊆ Universe, x ∈ s, acc ⊆ Universe:
+        [  acc                                                  s = {}  ]
+        [  (map . (f, s - x, head . (s - x), (f∘x) + acc))     otherwise  ]
+
+let square => y in Universe: y ^ 2
+
+do map . (square, {1, 2, 4}, 1, {})
