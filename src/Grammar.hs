@@ -2,15 +2,15 @@ module Grammar where
 
 import System.Environment
 
-data Constant = Epsilon  [Char]
-              | BoolLit  Bool
-              | CharLit  Char
-              | NumLit   Double
-              | SetLit   [Expression]
-              | TupleLit [Expression]
+data Constant = Epsilon   [Char]
+              | BoolLit   Bool
+              | CharLit   Char
+              | NumLit    Double
+              | SetLit    [Expression]
+              | TupleLit  [Expression]
               | AnyLit
-              | BAliasLit BindingName
-              | SProdLit [(Constant, Constant)] -- implicit
+              | LambdaLit (BindingName, [BindingType], CaseExpression)
+              | SProdLit  [(Constant, Constant)] -- implicit
               | UniverseLit -- implicit
               deriving (Show, Ord, Eq)
 
@@ -22,21 +22,21 @@ data Type = TUniverse
           | TCustom BindingName
           | TBinOp SetOp Type Type
           | TGroup Type
-          deriving Show
+          deriving (Show, Ord, Eq) 
 
 data SetOp = Union
            | Intersection
            | CartProduct
            | Difference
            | Function
-           deriving Show
+           deriving (Show, Ord, Eq)
 
 data Relationship = SubsetOf
                   | ElementOf
-                  deriving Show
+                  deriving (Show, Ord, Eq) 
 
 data BindingType = BType [BindingName] Relationship Type
-                 deriving Show
+                 deriving (Show, Ord, Eq)
 
 data PatternStmt = SimpleStmt BindingType
                  | PatternListStmt [PatternStmt]
@@ -44,7 +44,7 @@ data PatternStmt = SimpleStmt BindingType
 
 data CaseExpression = CEList [Expression]
                     | CECase [(Expression, [Expression])]
-                    deriving Show
+                    deriving (Show, Ord, Eq)
 
 data Expression = EBinOp BinaryOp Expression Expression
                 | EUnOp UnaryOp Expression

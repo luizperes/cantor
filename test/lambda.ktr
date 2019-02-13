@@ -2,8 +2,57 @@ let church => n in Universe, acc subset of Universe:
            [  acc            n < 1  ]
            [  church . (n-1, acc + {acc}) otherwise  ]
 
-do church . (5, '∅')
+do church . (0, '∅')
+do church . (1, '∅')
+do church . (2, '∅')
+do church . (3, '∅')
+do church . (4, '∅')
 
 # lam f . x . x
 # lam f . x . (f x)
 # lam f . x . (f (f x))
+
+let zero  => (f, x) in Universe: x 
+let one   => (f, x) in Universe: f . x
+let two   => (f, x) in Universe: f. f . x
+let three => (f, x) in Universe: f . f . f . x
+
+let nfold => (n, f, x) in Universe:
+          [ x                                n = 0 ]
+          [ nfold . (n -1, f, f . x)     otherwise ]
+
+let Z = -128..127
+let succ => x in Z: x + 1
+
+do zero  . (succ, 0)
+do one   . (succ, 0)
+do two   . (succ, 0)
+do three . (succ, 0)
+do nfold . (4, succ, 0)
+
+# f ^ (m + n) . (x)
+let sum => (m, n, f, x) in Universe: nfold . (m, f, (nfold . (n, f, x)))
+
+# f ^ (m*n) . (x)
+let mul => (m, n, f, x) in Universe: nfold . (m, f, (sum . (m, n, f, x)))
+
+do sum . (10, 3, succ, 0)
+
+do mul . (2, 4, succ, 0)
+
+let true   => (x, y) in Universe: x
+let false  => (x, y) in Universe: y
+let if     => (f, x, y) in Universe: f . (x, y)
+
+let jaca => (x, y) in Universe: false . (x, y) 
+
+do if . (jaca, 7, 3)
+
+# λf. (λx. f (x x))(λx. f (x x))
+# λf. (λx. f (x x))(λx. f (x x)
+# λf. (λx. f (λx. f (x x)))
+# λf. (λx. f (f (λx. f (x x))))
+# λf. (λx. f (f (f (λx. f (x x)))))
+# λf. (λx. f (f (f (f x))))
+# λf. (f (f (f (f x))))
+# (f (f (f (f x))))

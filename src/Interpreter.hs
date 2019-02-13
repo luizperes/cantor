@@ -57,7 +57,7 @@ eval' (EBind v) fEnv bEnv =
     Just value -> value
     _ ->
       case Map.lookup v fEnv of
-        Just _ -> BAliasLit v
+        Just (t2, t3) -> LambdaLit (v, t2, t3)
         _ -> Epsilon (v ++ " is not a valid binding name")
 eval' (EUnOp Negation expr) fEnv bEnv =
   case eval' expr fEnv bEnv of
@@ -219,14 +219,17 @@ applyBinOp' op c1 c2 =
 apply' :: BindingName -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant
 apply' bname input fEnv bEnv =
   case (Map.lookup bname fEnv) of
-    Just (btys, expr) ->
-      case (allTysExist' btys (makeInnerTys' btys bEnv)) of
-        Epsilon s -> Just (Epsilon s)
-        _ -> applyJoinTysAndBinds' btys expr fEnv bEnv input
+    Just (btys, expr) -> applyFn' (btys, expr) input fEnv bEnv
     _ ->
       case (eval' (EBind bname) fEnv bEnv) of
-        BAliasLit bname' -> apply' bname' input fEnv bEnv
+        LambdaLit (id, btys, expr) -> applyFn' (btys, expr) input fEnv bEnv
         _ -> Just (Epsilon (bname ++ " is not a valid binding name"))
+
+applyFn' :: ([BindingType], CaseExpression) -> Constant -> FunEnvMap -> BindEnvMap -> Maybe Constant 
+applyFn' (btys, expr) input fEnv bEnv =
+  case (allTysExist' btys (makeInnerTys' btys bEnv)) of
+    Epsilon s -> Just (Epsilon s)
+    _ -> applyJoinTysAndBinds' btys expr fEnv bEnv input
 
 makeInnerTys' :: [BindingType] -> BindEnvMap -> BindEnvMap
 makeInnerTys' [] bEnv = bEnv

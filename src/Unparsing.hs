@@ -20,7 +20,7 @@ unparseConst' (CharLit c) = "'" ++ [c] ++ "'"
 unparseConst' (BoolLit c) = show c
 unparseConst' (AnyLit) = "any"
 unparseConst' (UniverseLit) = unparseType' TUniverse
-unparseConst' (BAliasLit b) = b
+unparseConst' (LambdaLit (id, _, _)) = id
 
 unparseList' :: [Expression] -> [String] -> String
 unparseList' [] strs = concat (intersperse ", " strs)
