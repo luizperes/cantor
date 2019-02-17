@@ -1,0 +1,34 @@
+let x = 1
+let Z = -128..127
+
+let True = 1 = 1
+let False = ~True
+
+let sum => (a, b) in Universe: a + b
+
+do sum . (2, 3)
+
+# zero = λf . λx . x             #  = f^0 (x)
+# one = λf . λx . (f x)          #  = f^1 (x)
+# two = λf . λx . f (f x)        #  = f^2 (x)
+# three = λf . λx . f (f (f x))  #  =  f^3 (x)
+
+let zero  => (f, x) in Universe: x
+let one   => (f, x) in Universe: f . x
+let two   => (f, x) in Universe: f . f . x
+let three => (f, x) in Universe: f . f . f . x
+
+let succ  => x in Universe: x + 1
+
+do zero . (succ, 0)
+do one . (succ, 0)
+do two . (succ, 0)
+do three . (succ, 0)
+
+# f^n (x)
+
+let nfold => (n, f, x) in Universe:
+          [ x                          n = 0     ]
+          [ nfold . (n-1, f, f . x)    otherwise ]
+
+do nfold . (10, succ, 0)
