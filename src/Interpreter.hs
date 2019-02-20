@@ -130,12 +130,24 @@ interpretDo' :: BeginStmt -> (FunEnvMap, BindEnvMap) -> Constant
 interpretDo' (DoStmt fc) (fEnv, bEnv) = interpretFCall' fc (fEnv, bEnv)
 
 interpretFCall' :: FunctionCall -> (FunEnvMap, BindEnvMap) -> Constant
+interpretFCall' (FCSingle (TupleLit lst)) (fEnv, bEnv) =
+  case allCalleesComply' lst (fEnv, bEnv) "" of
+    "" -> (eval' (EConst (TupleLit lst)) fEnv bEnv)
+    s -> Epsilon ("binding(s) because" ++ s)
 interpretFCall' (FCSingle x) (fEnv, bEnv) = (eval' (EConst x) fEnv bEnv)
 interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
   eval'
     (EBinOp FCall (EBind bname) (EConst (interpretFCall' fc (fEnv, bEnv))))
     fEnv
     bEnv
+
+allCalleesComply' :: [Expression] -> (FunEnvMap, BindEnvMap) -> String -> String
+allCalleesComply' []  _ s = s
+allCalleesComply' ((EBind bind):es) (fEnv, bEnv) acc =
+  case (eval' (EBind bind) fEnv bEnv) of
+    Epsilon s -> allCalleesComply' es (fEnv, bEnv) (acc ++ " " ++ s)
+    _ -> allCalleesComply' es (fEnv, bEnv) acc
+allCalleesComply' (e:es) (fEnv, bEnv) acc = allCalleesComply' es (fEnv, bEnv) acc
 
 -- TODO: think of a better way to do it later...
 nRandom l = unsafePerformIO (getStdRandom (randomR (0, length l)))

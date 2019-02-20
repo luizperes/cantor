@@ -31,4 +31,4 @@ let nfold => (n, f, x) in Universe:
           [ x                          n = 0     ]
           [ nfold . (n-1, f, f . x)    otherwise ]
 
-do nfold . (10, succ, 0)
+do nfold . (10, acc, 0)
