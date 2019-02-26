@@ -143,6 +143,8 @@ interpretFCall' (FCNested bname fc) (fEnv, bEnv) =
 
 allCalleesComply' :: [Expression] -> (FunEnvMap, BindEnvMap) -> String -> String
 allCalleesComply' []  _ s = s
+allCalleesComply' ((EConst (TupleLit lst)):es) (fEnv, bEnv) acc =
+  allCalleesComply' lst (fEnv, bEnv) acc
 allCalleesComply' ((EBind bind):es) (fEnv, bEnv) acc =
   case (eval' (EBind bind) fEnv bEnv) of
     Epsilon s -> allCalleesComply' es (fEnv, bEnv) (acc ++ " " ++ s)

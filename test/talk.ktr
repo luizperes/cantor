@@ -31,4 +31,8 @@ let nfold => (n, f, x) in Universe:
           [ x                          n = 0     ]
           [ nfold . (n-1, f, f . x)    otherwise ]
 
+# should not work because acc is not a valid binding name
 do nfold . (10, acc, 0)
+
+# should not work because acc2 is not a valid binding name
+do nfold . (10, (2, acc2), 0)
